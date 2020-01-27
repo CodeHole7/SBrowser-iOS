@@ -1,0 +1,1 @@
+../../../VForceTouch/ForceTouch/Class/VForceTouchGestureRecognizer.h

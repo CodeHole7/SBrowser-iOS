@@ -1,0 +1,4 @@
+${PODS_ROOT}/Target Support Files/Pods-SBrowser/Pods-SBrowser-resources.sh
+${PODS_ROOT}/Eureka/Source/Resources/Eureka.bundle
+${PODS_CONFIGURATION_BUILD_DIR}/SDCAlertView/SDCAlertView.bundle
+${PODS_CONFIGURATION_BUILD_DIR}/TUSafariActivity/TUSafariActivity.bundle

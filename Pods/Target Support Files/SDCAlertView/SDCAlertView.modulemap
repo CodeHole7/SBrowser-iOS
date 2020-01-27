@@ -1,0 +1,6 @@
+module SDCAlertView {
+  umbrella header "SDCAlertView-umbrella.h"
+
+  export *
+  module * { export * }
+}

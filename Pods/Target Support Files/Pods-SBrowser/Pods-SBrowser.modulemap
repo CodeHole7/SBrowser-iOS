@@ -1,0 +1,6 @@
+module Pods_SBrowser {
+  umbrella header "Pods-SBrowser-umbrella.h"
+
+  export *
+  module * { export * }
+}

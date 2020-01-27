@@ -1,0 +1,6 @@
+module Pods_SBrowser_SBrowserUITests {
+  umbrella header "Pods-SBrowser-SBrowserUITests-umbrella.h"
+
+  export *
+  module * { export * }
+}

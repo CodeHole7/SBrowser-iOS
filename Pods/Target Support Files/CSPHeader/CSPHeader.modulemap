@@ -1,0 +1,6 @@
+module CSPHeader {
+  umbrella header "CSPHeader-umbrella.h"
+
+  export *
+  module * { export * }
+}

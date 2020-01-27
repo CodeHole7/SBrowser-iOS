@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15400" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15404"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SBSecurityPopUpViewController" customModule="SBrowser" customModuleProvider="target">
+            <connections>
+                <outlet property="customizeBt" destination="3vD-Gt-KBm" id="8ug-Ce-ZoO"/>
+                <outlet property="headerLb" destination="QAI-a9-pKU" id="9cI-ga-IsS"/>
+                <outlet property="learnMoreBt" destination="7uX-nH-uVm" id="VSq-W7-a25"/>
+                <outlet property="tableView" destination="m2R-Y7-qOW" id="t4u-DV-5xL"/>
+                <outlet property="view" destination="ZEb-lp-tQb" id="myE-dU-A8T"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="ZEb-lp-tQb">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Security Level for This Site" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="8" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="QAI-a9-pKU">
+                    <rect key="frame" x="16" y="52" width="382" height="18"/>
+                    <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                    <color key="textColor" name="Accent"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="m2R-Y7-qOW">
+                    <rect key="frame" x="0.0" y="78" width="414" height="696"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                    <connections>
+                        <outlet property="dataSource" destination="-1" id="jkE-kB-yk4"/>
+                        <outlet property="delegate" destination="-1" id="UJq-37-q7u"/>
+                    </connections>
+                </tableView>
+                <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3vD-Gt-KBm">
+                    <rect key="frame" x="87" y="782" width="240" height="36"/>
+                    <color key="backgroundColor" name="Ok"/>
+                    <constraints>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="240" id="QWg-J1-9qK"/>
+                        <constraint firstAttribute="height" constant="36" id="wh1-Jb-WmL"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                    <state key="normal" title="Customize">
+                        <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </state>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <integer key="value" value="18"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                    <connections>
+                        <action selector="customize" destination="-1" eventType="touchUpInside" id="tO0-8x-lc3"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7uX-nH-uVm">
+                    <rect key="frame" x="170.5" y="826" width="73" height="28"/>
+                    <fontDescription key="fontDescription" type="boldSystem" pointSize="13"/>
+                    <state key="normal" title="Learn More">
+                        <color key="titleColor" name="Accent"/>
+                    </state>
+                    <connections>
+                        <action selector="learnMore" destination="-1" eventType="touchUpInside" id="ZkM-oc-86S"/>
+                    </connections>
+                </button>
+            </subviews>
+            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+            <constraints>
+                <constraint firstItem="m2R-Y7-qOW" firstAttribute="leading" secondItem="YCA-5K-EkG" secondAttribute="leading" id="Bqs-jU-9es"/>
+                <constraint firstItem="7uX-nH-uVm" firstAttribute="top" secondItem="3vD-Gt-KBm" secondAttribute="bottom" constant="8" id="Fao-G6-BKc"/>
+                <constraint firstItem="QAI-a9-pKU" firstAttribute="leading" secondItem="YCA-5K-EkG" secondAttribute="leading" constant="16" id="OhF-A5-MxS"/>
+                <constraint firstItem="YCA-5K-EkG" firstAttribute="bottom" secondItem="7uX-nH-uVm" secondAttribute="bottom" constant="8" id="U5v-L5-dTh"/>
+                <constraint firstItem="m2R-Y7-qOW" firstAttribute="trailing" secondItem="YCA-5K-EkG" secondAttribute="trailing" id="Zyu-4M-Tc7"/>
+                <constraint firstItem="7uX-nH-uVm" firstAttribute="centerX" secondItem="ZEb-lp-tQb" secondAttribute="centerX" id="awY-1M-SJa"/>
+                <constraint firstItem="3vD-Gt-KBm" firstAttribute="top" secondItem="m2R-Y7-qOW" secondAttribute="bottom" constant="8" id="iIL-9W-f5W"/>
+                <constraint firstItem="3vD-Gt-KBm" firstAttribute="centerX" secondItem="ZEb-lp-tQb" secondAttribute="centerX" id="mJ4-gk-mPz"/>
+                <constraint firstItem="YCA-5K-EkG" firstAttribute="trailing" secondItem="QAI-a9-pKU" secondAttribute="trailing" constant="16" id="u72-MZ-ezh"/>
+                <constraint firstItem="QAI-a9-pKU" firstAttribute="top" secondItem="YCA-5K-EkG" secondAttribute="top" constant="8" id="uXh-3O-Tuu"/>
+                <constraint firstItem="m2R-Y7-qOW" firstAttribute="top" secondItem="QAI-a9-pKU" secondAttribute="bottom" constant="8" id="x7T-kw-Cdn"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="YCA-5K-EkG"/>
+            <point key="canvasLocation" x="132" y="153"/>
+        </view>
+    </objects>
+    <resources>
+        <namedColor name="Accent">
+            <color red="0.32899999618530273" green="0.32400000095367432" blue="0.4779999852180481" alpha="0.33000001311302185" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="Ok">
+            <color red="0.32899999618530273" green="0.32400000095367432" blue="0.4779999852180481" alpha="0.33000001311302185" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+    </resources>
+</document>
