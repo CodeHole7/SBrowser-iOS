@@ -25,8 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, JAHPAuthenticatingHTTPPro
 
         if Thread.isMainThread {
             delegate = UIApplication.shared.delegate
-        }
-        else {
+        } else {
             DispatchQueue.main.sync {
                 delegate = UIApplication.shared.delegate
             }
@@ -59,7 +58,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, JAHPAuthenticatingHTTPPro
         // If settings are up or something else, ignore shortcuts.
         if !(window?.rootViewController is BrowserViewController)
             || sharedBrowserVC?.presentedViewController != nil {
-
             return nil
         }
 
@@ -160,15 +158,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, JAHPAuthenticatingHTTPPro
 
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         
+        //UserDefaults.standard.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
+        //UserDefaults.standard.removeObject(forKey: kOldHisotries)
+        
         BookmarkSBrowser.firstRunSetup()
         
+        SBTabSecurity.restore()
         JAHPAuthenticatingHTTPProtocol.setDelegate(self)
         JAHPAuthenticatingHTTPProtocol.start()
-
         migrate()
-
         adjustMuteSwitchBehavior()
-
         DownloadHelper.deleteDownloadsDirectory()
 
         return true
@@ -180,6 +179,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, JAHPAuthenticatingHTTPPro
             handle(shortcut)
         }
         
+        NotificationCenter.default.post(name: NSNotification.Name(kAddNewBlankTab), object: nil, userInfo: nil)
+        
         return true
     }
 
@@ -187,7 +188,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, JAHPAuthenticatingHTTPPro
         application.ignoreSnapshotOnNextApplicationLaunch()
         sharedBrowserVC?.becomesInvisible()
 
-        //BlurredSnapshot.create()
+        SBBlurredSnapshot.create()
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
@@ -197,22 +198,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, JAHPAuthenticatingHTTPPro
         }
 
         SBTabSecurity.handleBackgrounding()
-
         application.ignoreSnapshotOnNextApplicationLaunch()
-
-        
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
-        //BlurredSnapshot.remove()
-
-        
+        SBBlurredSnapshot.remove()
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
         cookieJar.clearAllNonWhitelistedData()
         DownloadHelper.deleteDownloadsDirectory()
-
         application.ignoreSnapshotOnNextApplicationLaunch()
     }
 
@@ -221,7 +216,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, JAHPAuthenticatingHTTPPro
         dismissModalsAndCall {
             sharedBrowserVC?.addNewTabSBrowser(url.withFixedScheme)
         }
-
         return true
     }
 
@@ -405,7 +399,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, JAHPAuthenticatingHTTPPro
         if lastBuild < thisBuild {
             print("[\(String(describing: type(of: self)))] migrating from build \(lastBuild) -> \(thisBuild)")
 
-            //Migration.migrate()
+            SBMigration.migrate()
 
             UserDefaults.standard.set(thisBuild, forKey: "last_build")
         }

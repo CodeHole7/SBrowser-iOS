@@ -120,7 +120,7 @@ class SettingsSBrowser: NSObject {
     class var searchEngineName: String {
         get {
             return UserDefaults.standard.object(forKey: "search_engine") as? String
-                ?? allSearchEngineNames.first
+                ?? "Google"//allSearchEngineNames.first
                 ?? ""
         }
         set {

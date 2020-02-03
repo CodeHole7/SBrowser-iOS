@@ -9,34 +9,32 @@
 import Foundation
 
 extension URL {
-
+    
     static let blank = URL(string: "about:blank")!
-
     static let aboutSBrowser = URL(string: "about:SBrowser")!
     static let credits = Bundle.main.url(forResource: "credits", withExtension: "html")!
-    static let start = Bundle.main.url(forResource: "newTab", withExtension: "html")!
-
-    //static let start = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).last!.appendingPathComponent("start.html")
-
+    
+    static let start = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).last!.appendingPathComponent("newTab.html")
+    
     var withFixedScheme: URL? {
         switch scheme?.lowercased() {
         case "shttp":
             var urlc = URLComponents(url: self, resolvingAgainstBaseURL: true)
             urlc?.scheme = "http"
-
+            
             return urlc?.url
-
+            
         case "shttps":
             var urlc = URLComponents(url: self, resolvingAgainstBaseURL: true)
             urlc?.scheme = "https"
-
+            
             return urlc?.url
-
+            
         default:
             return self
         }
     }
-
+    
     var real: URL {
         switch self {
         case URL.aboutSBrowser:
@@ -45,25 +43,25 @@ extension URL {
             return self
         }
     }
-
+    
     var clean: URL? {
         switch self {
         case URL.credits:
             return URL.aboutSBrowser
-
+            
         case URL.start:
             return nil
-
+            
         default:
             return self
         }
     }
-
+    
     var isSpecial: Bool {
         switch self {
         case URL.blank, URL.aboutSBrowser, URL.credits, URL.start:
             return true
-
+            
         default:
             return false
         }
@@ -72,7 +70,7 @@ extension URL {
 
 @objc
 extension NSURL {
-
+    
     var withFixedScheme: NSURL? {
         return (self as URL).withFixedScheme as NSURL?
     }

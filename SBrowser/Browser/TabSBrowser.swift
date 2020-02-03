@@ -27,7 +27,7 @@ protocol TabSBrowserDelegate: class {
 
     func getIndex(of tab: TabSBrowser) -> Int?
 
-    //func present(_ vc: UIViewController, _ sender: UIView?)
+    func presentSBTab(_ vc: UIViewController, _ sender: UIView?)
 
     func unfocusSearchField()
 }
@@ -84,11 +84,9 @@ class TabSBrowser: UIView {
         didSet {
             if sslCertificate == nil {
                 secureMode = .insecure
-            }
-            else if sslCertificate?.isEV ?? false {
+            } else if sslCertificate?.isEV ?? false {
                 secureMode = .secureEv
-            }
-            else {
+            } else {
                 secureMode = .secure
             }
         }
@@ -109,8 +107,8 @@ class TabSBrowser: UIView {
     static let historySize = 40
     var skipHistory = false
 
-//    var history = [HistoryViewController.Item]()
-//
+    var history = [HistoryItem]()
+
     override var isUserInteractionEnabled: Bool {
         didSet {
             if previewController != nil {

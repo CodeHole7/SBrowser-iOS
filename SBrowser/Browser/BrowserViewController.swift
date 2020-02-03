@@ -12,6 +12,8 @@ internal var sharedBrowserVC: BrowserViewController?
 
 class BrowserViewController: UIViewController, TabSBrowserDelegate {
     
+    
+    
     @objc
     class var defaultBrowserVC: BrowserViewController? {
         return sharedBrowserVC
@@ -146,8 +148,7 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
         collectionViewTabs.dragDelegate = self
         collectionViewTabs.dropDelegate = self
         
-        addNewTabSBrowser(URL.start, transition: .notAnimated)
-        
+                
         for tab in tabs {
             tab.add(to: container)
         }
@@ -157,6 +158,7 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
         updateChrome()
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.webViewFinishOrErrorNotificaiton(notification:)), name: NSNotification.Name(kWebViewFinishOrError), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.addNewBlankTab(notification:)), name: NSNotification.Name(kAddNewBlankTab), object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -233,6 +235,10 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
         currentTab?.refresh()
 
         updateChrome()
+    }
+    
+    @objc func addNewBlankTab(notification: Notification) {
+        addNewTabSBrowser(URL.start, transition: .notAnimated)
     }
     
 
@@ -344,12 +350,12 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
                 return
             }
 
-            //present(UIActivityViewController(activityItems: [currentTab], applicationActivities: [AddBookmarkActivity(), TUSafariActivity()]), sender)
+            present(UIActivityViewController(activityItems: [currentTab], applicationActivities: [ActivityAddBookmarkSBrowser(), TUSafariActivity()]), sender)
 
         case btnTabs:
             showOverview()
         case btnSettings:
-            //present(SettingsViewController.instantiate())
+            present(SBSettingsVC.instantiate())
             break
         case btnAddTab:
             newTabFromOverview()
@@ -358,14 +364,10 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
         }
     }
     
-    
-    
     func showBookmarks() {
         unfocusSearchField()
         present(BookmarksViewController.instantiate(), btnBookmark)
     }
-    
-    
     
     @objc func keyboardWillShow(notification: Notification) {
         if let kbSize = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
@@ -380,7 +382,6 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
         liveSearchVc.tableView.scrollIndicatorInsets = .zero
     }
 
-
     // MARK: TabDelegate
 
     func updateChrome(_ sender: TabSBrowser? = nil) {
@@ -393,8 +394,7 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
                 if !progress.isHidden {
                     view.transition({ progress.isHidden = true })
                 }
-            }
-            else {
+            } else {
                 if progress.isHidden {
                     view.transition({ progress.isHidden = false })
                 }
@@ -402,7 +402,6 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
         }
 
         updateReloadBt()
-
         updateSearchField()
 
         // The last non-hidden should be the one which is showing.
@@ -412,17 +411,17 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
             btnForward.isEnabled = false
             btnMenu.isEnabled = false
             updateTabCount()
-
             return
         }
 
-        let preset = SecurityPreset(HostSettingsSBrowser.for(tab.url.host))
+        let host = tab.url.host
+        let hostBrowser = HostSettingsSBrowser.for(host)
+        let preset = SecurityPreset(hostBrowser)
 
         if preset == .custom {
             btnSecurity.setBackgroundImage(SBSecurityLevelCell.customShieldImage, for: .normal)
             btnSecurity.setTitle(nil, for: .normal)
-        }
-        else {
+        } else {
             btnSecurity.setBackgroundImage(SBSecurityLevelCell.shieldImage, for: .normal)
             btnSecurity.setTitle(preset.shortcode, for: .normal)
         }
@@ -433,6 +432,11 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
         btnForward.isEnabled = tab.canGoForward
         btnMenu.isEnabled = !tab.url.isSpecial
         updateTabCount()
+    }
+    
+    @objc    
+    func presentSBTab(_ vc: UIViewController, _ sender: UIView?) {
+        present(vc, sender)
     }
 
     @objc
@@ -494,20 +498,15 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
         debug("#removeTab tab=\(tab) focus=\(String(describing: focus))")
 
         unfocusSearchField()
-
         container.transition({
             tab.isHidden = true
             (focus ?? self.tabs.last)?.isHidden = false
         }) { _ in
             self.currentTab = focus ?? self.tabs.last
-
             let hash = tab.hash
-
             tab.removeFromSuperview()
             self.tabs.removeAll { $0 == tab }
-
             AppDelegate.shared?.cookieJar.clearNonWhitelistedData(forTab: UInt(hash))
-
             self.updateChrome()
         }
     }

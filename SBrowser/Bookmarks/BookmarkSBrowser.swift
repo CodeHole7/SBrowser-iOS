@@ -29,14 +29,17 @@ class BookmarkSBrowser: NSObject {
     private static let defaultBookmarks: [BookmarkSBrowser] = {
         var defaults = [BookmarkSBrowser]()
 
-        defaults.append(BookmarkSBrowser(name: "Wise Tech Labs", url: "http://wisetechlabs.com/"))
-        defaults.append(BookmarkSBrowser(name: "New York Times", url: "https://www.nytimes.com"))
-        defaults.append(BookmarkSBrowser(name: "BBC", url: "https://www.bbc.com"))
+        defaults.append(BookmarkSBrowser(name: "Google", url: "https://www.google.com/"))
+        defaults.append(BookmarkSBrowser(name: "Yahoo", url: "https://www.yahoo.com"))
         defaults.append(BookmarkSBrowser(name: "Facebook", url: "https://facebook.com"))
         defaults.append(BookmarkSBrowser(name: "Instagram", url: "https://www.instagram.com"))
-        defaults.append(BookmarkSBrowser(name: "Google", url: "https://www.google.com/"))
+        defaults.append(BookmarkSBrowser(name: "iCloud", url: "https://www.icloud.com"))
         defaults.append(BookmarkSBrowser(name: "Twitter", url: "https://twitter.com/"))
-        
+        defaults.append(BookmarkSBrowser(name: "Pinterest", url: "https://in.pinterest.com"))
+        defaults.append(BookmarkSBrowser(name: "Financial Express", url: "https://www.financialexpress.com/india-news/"))
+        defaults.append(BookmarkSBrowser(name: "New York Times", url: "https://www.nytimes.com"))
+        defaults.append(BookmarkSBrowser(name: "BBC", url: "https://www.bbc.com"))
+
         return defaults
     }();
 
@@ -89,8 +92,7 @@ class BookmarkSBrowser: NSObject {
                     if tab.url == URL.start {
                         if Thread.isMainThread {
                             tab.refresh()
-                        }
-                        else {
+                        } else {
                             DispatchQueue.main.sync(execute: tab.refresh)
                         }
                         
@@ -283,13 +285,16 @@ class BookmarkSBrowser: NSObject {
     // MARK: Public Methods
 
     class func icon(for url: URL, _ completion: @escaping (_ image: UIImage?) -> Void) {
-        try! FavIcon.downloadPreferred(url, width: 128, height: 128) { result in
-            if case let .success(image) = result {
-                completion(image)
+        do {
+            try FavIcon.downloadPreferred(url, width: 128, height: 128) { result in
+                if case let .success(image) = result {
+                    completion(image)
+                } else if case let .failure(error) = result {
+                    print("FavIcon Error1: \(error)")
+                }
             }
-            else {
-                completion(nil)
-            }
+        } catch let error {
+            print("FavIcon Error: \(error)")
         }
 
     }
@@ -298,7 +303,6 @@ class BookmarkSBrowser: NSObject {
         if let url = url {
             BookmarkSBrowser.icon(for: url) { image in
                 self.icon = image
-
                 completion()
             }
         }

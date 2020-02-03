@@ -32,19 +32,20 @@ extension BrowserViewController: UIScrollViewDelegate, UIGestureRecognizerDelega
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         // Stop the system gesture recognizer from triggering a short tap
         // on the back button, when our long tap gesture will soon trigger the
-        // display of the HistoryViewController.
+        // display of the SBHistoryTempVC.
         return gestureRecognizer is UILongPressGestureRecognizer
     }
-
 
     // MARK: Actions
 
     @IBAction func showHistory(_ sender: UIGestureRecognizer) {
         sender.isEnabled = false
 
-//        if currentTab?.history.count ?? 0 > 1 {
-//            present(HistoryViewController.instantiate(currentTab!), backBt)
-//        }
+        if currentTab?.history.count ?? 0 > 1 {
+            if let tab = currentTab {
+                present(SBHistoryTempVC.instantiate(tab), btnBack)
+            }
+        }
 
         sender.isEnabled = true
     }

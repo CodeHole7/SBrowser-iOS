@@ -10,3 +10,6 @@ import Foundation
 
 
 let kWebViewFinishOrError = "WebViewFinishOrErrorSB"
+let kAddNewBlankTab = "AddNewBlankTabSB"
+let kOldHisotries = "OldHisotriesSB"
+let kHomePage = "HomePageSB"

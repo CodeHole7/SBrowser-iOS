@@ -8,6 +8,7 @@
 
 import Foundation
 import QuickLook
+import MobileCoreServices
 
 //#MARK: TabSBrowser + Keyboard
 /**
@@ -168,7 +169,7 @@ extension TabSBrowser {
 
 
 
-
+//Mark:- TabsBrowser + DownloadTaskDelegate
 
 extension TabSBrowser: DownloadTaskDelegate, QLPreviewControllerDelegate, QLPreviewControllerDataSource {
 
@@ -245,6 +246,7 @@ extension TabSBrowser: DownloadTaskDelegate, QLPreviewControllerDelegate, QLPrev
     }
 }
 
+//#Mark:- TabSBrowser + UIGestureRecognizerDelegate
 
 extension TabSBrowser: UIGestureRecognizerDelegate {
 
@@ -382,15 +384,14 @@ extension TabSBrowser: UIGestureRecognizerDelegate {
                             let image = UIImage(data: data) {
 
                             UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
-                        }
-                        else {
+                        } else {
                             DispatchQueue.main.async {
                                 let alert = AlertSBrowser.build(
                                     message: String(format:
                                         NSLocalizedString("An error occurred downloading image %@", comment: ""),
                                                     img!.absoluteString))
 
-                                //self.tabDelegate?.present(alert, nil)//vishnu
+                                self.tabDelegate?.presentSBTab(alert, nil)//vishnu
                             }
                         }
                     }
@@ -415,7 +416,7 @@ extension TabSBrowser: UIGestureRecognizerDelegate {
             x: point.x + 35, // Offset for width of the finger.
             y: point.y, width: 1, height: 1)
 
-        //tabDelegate?.present(menu, nil)//vishnu
+        tabDelegate?.presentSBTab(menu, nil)//vishnu
     }
 
     @objc
@@ -510,5 +511,104 @@ extension TabSBrowser: UIGestureRecognizerDelegate {
         return (href: href.isEmpty ? nil : URL(string: href),
                 img: img.isEmpty ? nil : URL(string: img),
                 title: title)
+    }
+}
+
+//#Mark: - TabSBrowser + UIActivityItemSource
+
+extension TabSBrowser: UIActivityItemSource {
+
+    private var uti: String? {
+        return try? downloadedFile?.resourceValues(forKeys: [URLResourceKey.typeIdentifierKey]).typeIdentifier
+    }
+
+    private var isImageOrAv: Bool {
+        if let uti = uti as CFString? {
+            return UTTypeConformsTo(uti, kUTTypeImage)
+                || UTTypeConformsTo(uti, kUTTypeAudiovisualContent)
+        }
+
+        return false
+    }
+
+    private var isDocument: Bool {
+        if let uti = uti as CFString? {
+            return UTTypeConformsTo(uti, kUTTypeData)
+                && !UTTypeConformsTo(uti, kUTTypeHTML)
+                && !UTTypeConformsTo(uti, kUTTypeXML)
+        }
+
+        return false
+    }
+
+
+
+    func activityViewControllerPlaceholderItem(_ activityViewController: UIActivityViewController) -> Any {
+        if let file = downloadedFile,
+            isImageOrAv || isDocument {
+            return file
+        }
+
+        return url
+    }
+
+    func activityViewController(_ activityViewController: UIActivityViewController,
+                                itemForActivityType activityType: UIActivity.ActivityType?) -> Any? {
+
+        print("[\(String(describing: type(of: self)))] activityType=\(String(describing: activityType))")
+
+        if let downloadedFile = downloadedFile,
+            let activityType = activityType,
+            (activityType == .print
+                || activityType == .markupAsPDF
+                || activityType == .mail
+                || activityType == .openInIBooks
+                || activityType == .airDrop
+                || activityType == .copyToPasteboard
+                || activityType == .saveToCameraRoll
+                || activityType.rawValue == "com.apple.CloudDocsUI.AddToiCloudDrive") {
+
+            // Return local file URL -> The file will be loaded and shared from there
+            // and it will use the correct file name.
+            return downloadedFile
+        }
+
+        if activityType == .message && isImageOrAv {
+            return downloadedFile
+        }
+
+        return url
+    }
+
+    func activityViewController(_ activityViewController: UIActivityViewController,
+                                subjectForActivityType activityType: UIActivity.ActivityType?) -> String {
+        return title
+    }
+
+    func activityViewController(_ activityViewController: UIActivityViewController,
+                                dataTypeIdentifierForActivityType activityType: UIActivity.ActivityType?) -> String {
+
+        return uti ?? kUTTypeURL as String
+    }
+
+    func activityViewController(_ activityViewController: UIActivityViewController,
+                                thumbnailImageForActivityType activityType: UIActivity.ActivityType?,
+                                suggestedSize size: CGSize) -> UIImage? {
+
+        UIGraphicsBeginImageContext(size)
+
+        if let context = UIGraphicsGetCurrentContext() {
+            if downloadedFile != nil {
+                previewController?.view.layer.render(in: context)
+            }
+            else {
+                webView.layer.render(in: context)
+            }
+        }
+
+        let thumbnail = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return thumbnail
     }
 }
