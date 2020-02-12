@@ -6,10 +6,12 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <WebKit/WebKit.h>
 
 @interface CookieJar : NSObject
 
 @property (strong, atomic) NSHTTPCookieStorage *cookieStorage;
+@property (strong, atomic) WKWebsiteDataStore *cookieStorageWK;
 @property (strong) NSMutableDictionary *dataAccesses;
 @property NSMutableDictionary *localStorage;
 @property NSNumber *oldDataSweepTimeout;

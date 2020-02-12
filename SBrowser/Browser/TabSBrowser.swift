@@ -2,7 +2,7 @@
 //  TabSBrowser.swift
 //  SBrowser
 //
-//  Created by JinXu on 21/01/20.
+//  Created by Jin Xu on 21/01/20.
 //  Copyright © 2020 SBrowser. All rights reserved.
 //
 
@@ -123,12 +123,21 @@ class TabSBrowser: UIView {
     }
 
     private(set) lazy var webView: WKWebView = {
-        let view = WKWebView()
-        view.navigationDelegate = self
         
-//        view.scalesPageToFit = true
-//        view.allowsInlineMediaPlayback = true
+        
+        let preferences = WKPreferences()
+        let webConfiguration = WKWebViewConfiguration()
+        webConfiguration.preferences = preferences
+        
+        let view = WKWebView(frame: .zero, configuration: webConfiguration)
+        
+//        let userAgentValue = "Chrome/56.0.0.0 Mobile"
+//        view.customUserAgent = userAgentValue
 
+
+//        let view = WKWebView()
+        view.navigationDelegate = self
+        view.uiDelegate = self
         return view.add(to: self)
     }()
 
@@ -254,8 +263,7 @@ class TabSBrowser: UIView {
         if webView.canGoBack {
             skipHistory = true
             webView.goBack()
-        }
-        else if let parentId = parentId {
+        } else if let parentId = parentId {
             tabDelegate?.removeTabSBrowser(self, focus: tabDelegate?.getTabSBrowser(hash: parentId))
         }
     }
@@ -272,7 +280,6 @@ class TabSBrowser: UIView {
     func stringByEvaluatingJavaScript(from script: String) -> String? {
         return webView.stringByEvaluatingJavaScript(from: script)
     }
-
 
     // MARK: Private Methods
     
@@ -325,8 +332,8 @@ class TabSBrowser: UIView {
 
 
     deinit {
-        cancelDownload()
         
+        cancelDownload()
         observation = nil
 
         let block = {

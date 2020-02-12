@@ -61,6 +61,7 @@
 		273D8A8423D5840400ADA171 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 273D8A8223D5840400ADA171 /* LaunchScreen.storyboard */; };
 		273D8A8F23D5840400ADA171 /* SBrowserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 273D8A8E23D5840400ADA171 /* SBrowserTests.swift */; };
 		273D8A9A23D5840400ADA171 /* SBrowserUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 273D8A9923D5840400ADA171 /* SBrowserUITests.swift */; };
+		27405AAE23ED974C00DB4B38 /* PKCS12.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27405AAD23ED974C00DB4B38 /* PKCS12.swift */; };
 		2765576C23D9CC72006FAA96 /* BookmarksViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2765576B23D9CC72006FAA96 /* BookmarksViewController.swift */; };
 		2765577123D9CD13006FAA96 /* BookmarkCellSBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2765576F23D9CD13006FAA96 /* BookmarkCellSBrowser.swift */; };
 		2765577223D9CD13006FAA96 /* BookmarkCellSBrowser.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2765577023D9CD13006FAA96 /* BookmarkCellSBrowser.xib */; };
@@ -129,7 +130,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		2704203723E2E5EB002C3FCD /* SBrowser.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SBrowser.entitlements; sourceTree = "<group>"; };
 		2704203823E2E5ED002C3FCD /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		2708229323E846CD00061A42 /* RadioButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioButton.swift; sourceTree = "<group>"; };
 		270910E723D811AC00F45F7A /* LiveSearchSBrowserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveSearchSBrowserViewController.swift; sourceTree = "<group>"; };
@@ -198,6 +198,7 @@
 		273D8A9523D5840400ADA171 /* SBrowserUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SBrowserUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		273D8A9923D5840400ADA171 /* SBrowserUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SBrowserUITests.swift; sourceTree = "<group>"; };
 		273D8A9B23D5840400ADA171 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		27405AAD23ED974C00DB4B38 /* PKCS12.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PKCS12.swift; sourceTree = "<group>"; };
 		2765576B23D9CC72006FAA96 /* BookmarksViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarksViewController.swift; sourceTree = "<group>"; };
 		2765576F23D9CD13006FAA96 /* BookmarkCellSBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarkCellSBrowser.swift; sourceTree = "<group>"; };
 		2765577023D9CD13006FAA96 /* BookmarkCellSBrowser.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BookmarkCellSBrowser.xib; sourceTree = "<group>"; };
@@ -421,6 +422,7 @@
 				2710B5D323DEEB1700F97C73 /* SBBlurredSnapshot.swift */,
 				27E00E4223E1675F00E88CB5 /* OtherHelper.swift */,
 				2708229323E846CD00061A42 /* RadioButton.swift */,
+				27405AAD23ED974C00DB4B38 /* PKCS12.swift */,
 			);
 			path = Swift;
 			sourceTree = "<group>";
@@ -465,7 +467,6 @@
 		273D8A7323D583ED00ADA171 /* SBrowser */ = {
 			isa = PBXGroup;
 			children = (
-				2704203723E2E5EB002C3FCD /* SBrowser.entitlements */,
 				2710B5C723DEBBAC00F97C73 /* SBMigration */,
 				270910E923D812B400F45F7A /* SettingsSBrowser */,
 				270E3D7523D5CC9F009A96C1 /* Browser */,
@@ -909,6 +910,7 @@
 				272BD76123D734EC00BE69A1 /* GlobalObjects.swift in Sources */,
 				273D8A7923D583ED00ADA171 /* ViewController.swift in Sources */,
 				27EC0D6723DB301D00D81B14 /* JAHPQNSURLSessionDemux.m in Sources */,
+				27405AAE23ED974C00DB4B38 /* PKCS12.swift in Sources */,
 				270910F223D820DE00F45F7A /* BrowserViewController+Toolbar.swift in Sources */,
 				270910F023D81EC300F45F7A /* UISearchBar+Helper.swift in Sources */,
 				270910EB23D812E200F45F7A /* SettingsSBrowser.swift in Sources */,
@@ -1116,6 +1118,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = SBrowser/SBrowser.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = FT9W2KPN24;
 				HEADER_SEARCH_PATHS = (
@@ -1178,6 +1181,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.sbrowser.sbrowser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "SBrowser/SBrowser-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -1192,6 +1196,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = SBrowser/SBrowser.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = FT9W2KPN24;
 				HEADER_SEARCH_PATHS = (
@@ -1254,6 +1259,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.sbrowser.sbrowser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "SBrowser/SBrowser-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

@@ -29,5 +29,14 @@
 		<key>autocomplete_url</key>
 		<string>https://www.bing.com/search?q=%@</string>
 	</dict>
+	<key>DuckDuckGo</key>
+	<dict>
+		<key>search_url</key>
+		<string>https://duckduckgo.com/?q=%@</string>
+		<key>homepage_url</key>
+		<string>https://www.duckduckgo.com/</string>
+		<key>autocomplete_url</key>
+		<string>https://duckduckgo.com/ac/?type=list&amp;q=%@</string>
+	</dict>
 </dict>
 </plist>

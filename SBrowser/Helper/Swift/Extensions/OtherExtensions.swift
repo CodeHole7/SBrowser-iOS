@@ -2,7 +2,7 @@
 //  OtherExtensions.swift
 //  SBrowser
 //
-//  Created by JinXu on 24/01/20.
+//  Created by Jin Xu on 24/01/20.
 //  Copyright © 2020 SBrowser. All rights reserved.
 //
 
@@ -29,3 +29,4 @@ extension String {
         return nil
     }
 }
+

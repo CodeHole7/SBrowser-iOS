@@ -2,13 +2,15 @@
 //  AppDelegate.swift
 //  SBrowser
 //
-//  Created by JinXu on 20/01/20.
+//  Created by Jin Xu on 20/01/20.
 //  Copyright © 2020 SBrowser. All rights reserved.
 //
 
 import UIKit
 import CoreData
 import AVFoundation
+import DeviceCheck
+import SwiftKeychainWrapper
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, JAHPAuthenticatingHTTPProtocolDelegate {
@@ -52,6 +54,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, JAHPAuthenticatingHTTPPro
     }
     
     var window: UIWindow?
+    
+    
        
     
     override var keyCommands: [UIKeyCommand]? {
@@ -153,10 +157,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate, JAHPAuthenticatingHTTPPro
     
     
     
+    func deviceCheck() {
+        if DCDevice.current.isSupported {
+            DCDevice.current.generateToken { (data, error) in
+                if error == nil {
+                    if let data = data {
+                        let token = data.base64EncodedString()
+                        print(token)
+                        
+                        let saveSuccessful: Bool = KeychainWrapper.standard.set(token, forKey: "token")
+                        
+                        let retrievedToken: String? = KeychainWrapper.standard.string(forKey: "token")
+                    }
+                }
+            }
+        }
+    }
+    
     
     // MARK: UIApplicationDelegate
 
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        
+        deviceCheck()
         
         //UserDefaults.standard.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
         //UserDefaults.standard.removeObject(forKey: kOldHisotries)
@@ -164,8 +187,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, JAHPAuthenticatingHTTPPro
         BookmarkSBrowser.firstRunSetup()
         
         SBTabSecurity.restore()
-        JAHPAuthenticatingHTTPProtocol.setDelegate(self)
-        JAHPAuthenticatingHTTPProtocol.start()
+//        JAHPAuthenticatingHTTPProtocol.setDelegate(self)
+//        JAHPAuthenticatingHTTPProtocol.start()
         migrate()
         adjustMuteSwitchBehavior()
         DownloadHelper.deleteDownloadsDirectory()
@@ -217,7 +240,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, JAHPAuthenticatingHTTPPro
             sharedBrowserVC?.addNewTabSBrowser(url.withFixedScheme)
         }
         return true
-    }
+    }        
 
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
 
@@ -359,12 +382,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, JAHPAuthenticatingHTTPPro
         let session = AVAudioSession.sharedInstance()
 
         if SettingsSBrowser.muteWithSwitch {
-            try? session.setCategory(.ambient)
+            try? session.setCategory(.ambient, mode: .default)
             try? session.setActive(false)
         }
         else {
-            try? session.setCategory(.playback)
-        }
+            try? session.setCategory(.playback, mode: .default)
+            try? session.setActive(true)
+            
+          }
     }
 
     func show(_ viewController: UIViewController?, _ completion: ((Bool) -> Void)? = nil) {
@@ -400,7 +425,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, JAHPAuthenticatingHTTPPro
             print("[\(String(describing: type(of: self)))] migrating from build \(lastBuild) -> \(thisBuild)")
 
             SBMigration.migrate()
-
             UserDefaults.standard.set(thisBuild, forKey: "last_build")
         }
     }

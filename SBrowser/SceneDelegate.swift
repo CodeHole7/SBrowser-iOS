@@ -2,7 +2,7 @@
 //  SceneDelegate.swift
 //  SBrowser
 //
-//  Created by JinXu on 20/01/20.
+//  Created by Jin Xu on 20/01/20.
 //  Copyright © 2020 SBrowser. All rights reserved.
 //
 
@@ -50,6 +50,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Save changes in the application's managed object context when the application transitions to the background.
         (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
     }
+    
+    
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        guard let url = URLContexts.first?.url else {
+            return
+        }
+        
+        AppDelegate.shared?.application(UIApplication.shared, open: url, options: [:])
+    }
+    
 
 
 }

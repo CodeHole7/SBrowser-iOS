@@ -63,6 +63,7 @@
 	appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
 
 	_cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    _cookieStorageWK = [WKWebsiteDataStore defaultDataStore];
 	[_cookieStorage setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
 
 	_dataAccesses = [[NSMutableDictionary alloc] init];
@@ -116,7 +117,7 @@
 		
 		[cHostCount setObject:@{ @"cookies" : [NSNumber numberWithInt:[count intValue] + 1] } forKey:cdomain];
 	}
-	
+    
 	/* mix in localstorage */
 	for (NSString *host in [self localStorageHosts]) {
 		[cHostCount setObject:@{ @"localStorage" : [NSNumber numberWithInt:1] } forKey:host];
@@ -128,6 +129,40 @@
 	}
 	
 	return sortedCookieHosts;
+}
+
+
+//Is method ko closer banana h phir use hoga
+- (NSArray *)sortedHostCountsWK
+{
+    NSMutableDictionary *cHostCount = [[NSMutableDictionary alloc] init];
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"^\\." options:0 error:nil];
+    NSMutableArray *sortedCookieHosts;
+    
+    [[self.cookieStorageWK httpCookieStore] getAllCookies:^(NSArray<NSHTTPCookie *>* cookiesWK) {
+        for (NSHTTPCookie *c in cookiesWK) {
+            /* strip off leading . */
+            NSString *cdomain = [regex stringByReplacingMatchesInString:[c domain] options:0 range:NSMakeRange(0, [[c domain] length]) withTemplate:@""];
+            NSNumber *count = @0;
+            NSDictionary *cct = [cHostCount objectForKey:cdomain];
+            if (cct)
+                count = [cct objectForKey:@"cookies"];
+            
+            [cHostCount setObject:@{ @"cookies" : [NSNumber numberWithInt:[count intValue] + 1] } forKey:cdomain];
+        }
+    }];
+    
+    /* mix in localstorage */
+    for (NSString *host in [self localStorageHosts]) {
+        [cHostCount setObject:@{ @"localStorage" : [NSNumber numberWithInt:1] } forKey:host];
+    }
+
+    sortedCookieHosts = [[NSMutableArray alloc] initWithCapacity:[cHostCount count]];
+    for (NSString *cdomain in [[cHostCount allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]) {
+        [sortedCookieHosts addObject:@{ cdomain : [cHostCount objectForKey:cdomain] }];
+    }
+    
+    return sortedCookieHosts;
 }
 
 - (NSDictionary *)localStorageFiles
@@ -256,7 +291,19 @@
 			[[self cookieStorage] deleteCookie:cookie];
 		}
 	}
-	
+    
+    
+    [[[self cookieStorageWK] httpCookieStore] getAllCookies:^(NSArray<NSHTTPCookie *> * cookies) {
+        for (NSHTTPCookie *cookie in cookies) {
+                if ([[cookie domain] isEqualToString:host] || [[cookie domain] isEqualToString:[NSString stringWithFormat:@".%@", host]]) {
+        #ifdef TRACE_COOKIES
+                    NSLog(@"[CookieJar] deleting cookie for %@: %@", host, cookie);
+        #endif
+                    [[[self cookieStorageWK] httpCookieStore] deleteCookie:cookie completionHandler:nil];
+                }
+            }
+    }];
+    	
 	NSDictionary *allFiles = [self localStorageFiles];
 	
 	/* sort filenames by length descending, so we're always deleting files in a dir before the dir itself */
@@ -303,6 +350,36 @@
 			[[self cookieStorage] deleteCookie:cookie];
 		}
 	}
+    
+    [[[self cookieStorageWK] httpCookieStore] getAllCookies:^(NSArray<NSHTTPCookie *> * cookies) {
+        for (NSHTTPCookie *cookie in cookies) {
+                if ([self isHostWhitelisted:[cookie domain]]) {
+                    continue;
+                }
+                
+                NSNumber *blocker;
+                
+                if (secs > 0) {
+                    for (NSNumber *tabHashN in [[self dataAccesses] allKeys]) {
+                        NSMutableDictionary *tabCookies = [[self dataAccesses] objectForKey:tabHashN];
+                        NSDate *la = [tabCookies objectForKey:[cookie domain]];
+                        if (la != nil || [[NSDate date] timeIntervalSinceDate:la] < secs) {
+                            blocker = tabHashN;
+                            break;
+                        }
+                    }
+                }
+
+                if (secs == 0 || blocker == nil) {
+        #ifdef TRACE_COOKIE_WHITELIST
+                    NSLog(@"[CookieJar] deleting non-whitelisted cookie: %@", cookie);
+        #endif
+                    [[[self cookieStorageWK] httpCookieStore] deleteCookie:cookie completionHandler:nil];
+                }
+            }
+    }];
+    
+    
 }
 
 - (void)clearAllNonWhitelistedLocalStorageOlderThan:(NSTimeInterval)secs

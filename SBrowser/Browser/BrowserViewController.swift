@@ -2,7 +2,7 @@
 //  BrowserViewController.swift
 //  SBrowser
 //
-//  Created by JinXu on 20/01/20.
+//  Created by Jin Xu on 20/01/20.
 //  Copyright © 2020 SBrowser. All rights reserved.
 //
 
@@ -159,6 +159,10 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.webViewFinishOrErrorNotificaiton(notification:)), name: NSNotification.Name(kWebViewFinishOrError), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.addNewBlankTab(notification:)), name: NSNotification.Name(kAddNewBlankTab), object: nil)
+        
+        
+        
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -425,6 +429,23 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
             btnSecurity.setBackgroundImage(SBSecurityLevelCell.shieldImage, for: .normal)
             btnSecurity.setTitle(preset.shortcode, for: .normal)
         }
+        
+        
+        
+//        if (!_isOCSPRequest &&
+//            [_wvt secureMode] > SecureModeInsecure &&
+//            ![[[[_actualRequest URL] scheme] lowercaseString] isEqualToString:@"https"]) {
+//            /* an element on the page was not sent over https but the initial request was, downgrade to mixed */
+//            if ([_wvt secureMode] > SecureModeInsecure) {
+//                [_wvt setSecureMode:SecureModeMixed];
+//            }
+//        }
+        
+      //mj//  if tab.url.scheme?.lowercased() == "https" {
+       //mj//     tab.secureMode = TabSBrowser.SecureMode.mixed
+       //mj// }
+        
+        
 
         updateEncryptionBt(tab.secureMode)
         

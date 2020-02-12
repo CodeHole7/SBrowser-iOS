@@ -2,7 +2,7 @@
 //  SBHistoryVC.swift
 //  SBrowser
 //
-//  Created by JinXu on 29/01/20.
+//  Created by Jin Xu on 29/01/20.
 //  Copyright © 2020 SBrowser. All rights reserved.
 //
 
@@ -21,23 +21,19 @@ class SBHistoryVC: UITableViewController {
                 vc.history.append(HistoryItem(dictionary: dict))
             }
         }
-        
         return UINavigationController(rootViewController: vc)
     }
     
-    private lazy var doneBt = UIBarButtonItem(barButtonSystemItem: .done,
-    target: self, action: #selector(_dismiss))
+    private lazy var doneBt = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(_dismiss))
     
     private lazy var deleteAllBt = UIBarButtonItem(title: "Remove All", style: .done, target: self, action: #selector(_removeAll))
     
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
         navigationItem.title = NSLocalizedString("History", comment: "")
         navigationItem.leftBarButtonItem = doneBt
         navigationItem.rightBarButtonItem = deleteAllBt
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -48,7 +44,6 @@ class SBHistoryVC: UITableViewController {
             deleteAllBt.isEnabled = false
         }
     }
-
 
     // MARK: UITableViewDataSource
 

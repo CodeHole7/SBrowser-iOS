@@ -2,7 +2,7 @@
 //  URL+Helper.swift
 //  SBrowser
 //
-//  Created by JinXu on 21/01/20.
+//  Created by Jin Xu on 21/01/20.
 //  Copyright © 2020 SBrowser. All rights reserved.
 //
 
@@ -14,17 +14,30 @@ extension URL {
     static let aboutSBrowser = URL(string: "about:SBrowser")!
     static let credits = Bundle.main.url(forResource: "credits", withExtension: "html")!
     
-    static let start = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).last!.appendingPathComponent("newTab.html")
+    //static let start = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).last!.appendingPathComponent("newTab.html")
+    
+    static var start: URL {
+        
+        let dU = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).last!.appendingPathComponent("newTab.html")
+        
+        if let defaultHomePage = UserDefaults.standard.value(forKey: kHomePage) as? String {
+            if defaultHomePage != "default" && (defaultHomePage as? NSString)?.lastPathComponent != "newTab.html" {
+                return URL(string: defaultHomePage) ?? dU
+            }
+        }
+        
+        return dU
+    }
     
     var withFixedScheme: URL? {
         switch scheme?.lowercased() {
-        case "shttp":
+        case "sbrowserhttp":
             var urlc = URLComponents(url: self, resolvingAgainstBaseURL: true)
             urlc?.scheme = "http"
             
             return urlc?.url
             
-        case "shttps":
+        case "sbrowserhttps":
             var urlc = URLComponents(url: self, resolvingAgainstBaseURL: true)
             urlc?.scheme = "https"
             
@@ -70,7 +83,6 @@ extension URL {
 
 @objc
 extension NSURL {
-    
     var withFixedScheme: NSURL? {
         return (self as URL).withFixedScheme as NSURL?
     }
