@@ -44,6 +44,16 @@
 		271180CE23D8675F00EA331F /* BrowserViewController+Tabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 271180CD23D8675F00EA331F /* BrowserViewController+Tabs.swift */; };
 		271180D023D886C500EA331F /* newTab.html in Resources */ = {isa = PBXBuildFile; fileRef = 271180CF23D886C500EA331F /* newTab.html */; };
 		271180D223D887DE00EA331F /* credits.html in Resources */ = {isa = PBXBuildFile; fileRef = 271180D123D887DE00EA331F /* credits.html */; };
+		271455C223F53D1E00188403 /* CredentialsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 271455C123F53D1D00188403 /* CredentialsController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		271455C523F548E500188403 /* PickListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 271455C323F548E500188403 /* PickListController.m */; };
+		271455C823F548F700188403 /* CredentialImportController.m in Sources */ = {isa = PBXBuildFile; fileRef = 271455C723F548F700188403 /* CredentialImportController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		271455CB23F5498100188403 /* ServerTrustChallengeHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 271455CA23F5498100188403 /* ServerTrustChallengeHandler.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		271455CE23F54BF600188403 /* ChallengeHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 271455CD23F54BF500188403 /* ChallengeHandler.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		271455D123F5507500188403 /* DebugOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 271455D023F5507500188403 /* DebugOptions.m */; };
+		271455D323F56D5500188403 /* CredentialImportController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 271455D223F56D5500188403 /* CredentialImportController.xib */; };
+		2718EB8823FAB9A00053778C /* SBProfilesInfoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2718EB8723FAB9A00053778C /* SBProfilesInfoVC.swift */; };
+		271CAFDF23F7C813002E2D6B /* ClientIdentityController.m in Sources */ = {isa = PBXBuildFile; fileRef = 271CAFDD23F7C812002E2D6B /* ClientIdentityController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		271CAFE123F7C82A002E2D6B /* ClientIdentityController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 271CAFE023F7C82A002E2D6B /* ClientIdentityController.xib */; };
 		272B566123E303BE00666D1D /* SBHomePageSettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272B566023E303BE00666D1D /* SBHomePageSettingVC.swift */; };
 		272BD74223D717D000BE69A1 /* TabSBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272BD74123D717D000BE69A1 /* TabSBrowser.swift */; };
 		272BD74623D7274900BE69A1 /* ObjcHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 272BD74523D7274900BE69A1 /* ObjcHelper.m */; };
@@ -62,6 +72,8 @@
 		273D8A8F23D5840400ADA171 /* SBrowserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 273D8A8E23D5840400ADA171 /* SBrowserTests.swift */; };
 		273D8A9A23D5840400ADA171 /* SBrowserUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 273D8A9923D5840400ADA171 /* SBrowserUITests.swift */; };
 		27405AAE23ED974C00DB4B38 /* PKCS12.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27405AAD23ED974C00DB4B38 /* PKCS12.swift */; };
+		2740E2D923F43E4A00803D5D /* SBProfilesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2740E2D823F43E4900803D5D /* SBProfilesVC.swift */; };
+		2740E2DD23F43FA500803D5D /* Credentials.m in Sources */ = {isa = PBXBuildFile; fileRef = 2740E2DC23F43FA500803D5D /* Credentials.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		2765576C23D9CC72006FAA96 /* BookmarksViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2765576B23D9CC72006FAA96 /* BookmarksViewController.swift */; };
 		2765577123D9CD13006FAA96 /* BookmarkCellSBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2765576F23D9CD13006FAA96 /* BookmarkCellSBrowser.swift */; };
 		2765577223D9CD13006FAA96 /* BookmarkCellSBrowser.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2765577023D9CD13006FAA96 /* BookmarkCellSBrowser.xib */; };
@@ -172,6 +184,23 @@
 		271180CD23D8675F00EA331F /* BrowserViewController+Tabs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BrowserViewController+Tabs.swift"; sourceTree = "<group>"; };
 		271180CF23D886C500EA331F /* newTab.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = newTab.html; sourceTree = "<group>"; };
 		271180D123D887DE00EA331F /* credits.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = credits.html; sourceTree = "<group>"; };
+		271455C023F53D1700188403 /* CredentialsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CredentialsController.h; sourceTree = "<group>"; };
+		271455C123F53D1D00188403 /* CredentialsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CredentialsController.m; sourceTree = "<group>"; };
+		271455C323F548E500188403 /* PickListController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PickListController.m; sourceTree = "<group>"; };
+		271455C423F548E500188403 /* PickListController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PickListController.h; sourceTree = "<group>"; };
+		271455C623F548F700188403 /* CredentialImportController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CredentialImportController.h; sourceTree = "<group>"; };
+		271455C723F548F700188403 /* CredentialImportController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CredentialImportController.m; sourceTree = "<group>"; };
+		271455C923F5492700188403 /* ServerTrustChallengeHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServerTrustChallengeHandler.h; sourceTree = "<group>"; };
+		271455CA23F5498100188403 /* ServerTrustChallengeHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerTrustChallengeHandler.m; sourceTree = "<group>"; };
+		271455CC23F54BF500188403 /* ChallengeHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChallengeHandler.h; sourceTree = "<group>"; };
+		271455CD23F54BF500188403 /* ChallengeHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChallengeHandler.m; sourceTree = "<group>"; };
+		271455CF23F5507500188403 /* DebugOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugOptions.h; sourceTree = "<group>"; };
+		271455D023F5507500188403 /* DebugOptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DebugOptions.m; sourceTree = "<group>"; };
+		271455D223F56D5500188403 /* CredentialImportController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CredentialImportController.xib; sourceTree = "<group>"; };
+		2718EB8723FAB9A00053778C /* SBProfilesInfoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SBProfilesInfoVC.swift; sourceTree = "<group>"; };
+		271CAFDD23F7C812002E2D6B /* ClientIdentityController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClientIdentityController.m; sourceTree = "<group>"; };
+		271CAFDE23F7C813002E2D6B /* ClientIdentityController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClientIdentityController.h; sourceTree = "<group>"; };
+		271CAFE023F7C82A002E2D6B /* ClientIdentityController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ClientIdentityController.xib; sourceTree = "<group>"; };
 		272B566023E303BE00666D1D /* SBHomePageSettingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SBHomePageSettingVC.swift; sourceTree = "<group>"; };
 		272BD74123D717D000BE69A1 /* TabSBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabSBrowser.swift; sourceTree = "<group>"; };
 		272BD74323D7274800BE69A1 /* SBrowser-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SBrowser-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -199,6 +228,9 @@
 		273D8A9923D5840400ADA171 /* SBrowserUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SBrowserUITests.swift; sourceTree = "<group>"; };
 		273D8A9B23D5840400ADA171 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		27405AAD23ED974C00DB4B38 /* PKCS12.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PKCS12.swift; sourceTree = "<group>"; };
+		2740E2D823F43E4900803D5D /* SBProfilesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SBProfilesVC.swift; sourceTree = "<group>"; };
+		2740E2DB23F43FA500803D5D /* Credentials.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Credentials.h; sourceTree = "<group>"; };
+		2740E2DC23F43FA500803D5D /* Credentials.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Credentials.m; sourceTree = "<group>"; };
 		2765576B23D9CC72006FAA96 /* BookmarksViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarksViewController.swift; sourceTree = "<group>"; };
 		2765576F23D9CD13006FAA96 /* BookmarkCellSBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarkCellSBrowser.swift; sourceTree = "<group>"; };
 		2765577023D9CD13006FAA96 /* BookmarkCellSBrowser.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BookmarkCellSBrowser.xib; sourceTree = "<group>"; };
@@ -320,7 +352,10 @@
 				2710B5DB23DEF70600F97C73 /* SBCustomSiteVC.swift */,
 				2710B5DF23DEF96900F97C73 /* SBStorageFirstVC.swift */,
 				2710B5E123DEF9B300F97C73 /* StorageSecondVC.swift */,
+				2740E2D823F43E4900803D5D /* SBProfilesVC.swift */,
+				2718EB8723FAB9A00053778C /* SBProfilesInfoVC.swift */,
 				272B566023E303BE00666D1D /* SBHomePageSettingVC.swift */,
+				2740E2DA23F43F9500803D5D /* Credentials */,
 			);
 			path = SettingsSBrowser;
 			sourceTree = "<group>";
@@ -503,6 +538,31 @@
 				273D8A9B23D5840400ADA171 /* Info.plist */,
 			);
 			path = SBrowserUITests;
+			sourceTree = "<group>";
+		};
+		2740E2DA23F43F9500803D5D /* Credentials */ = {
+			isa = PBXGroup;
+			children = (
+				271455C423F548E500188403 /* PickListController.h */,
+				271455C323F548E500188403 /* PickListController.m */,
+				2740E2DB23F43FA500803D5D /* Credentials.h */,
+				2740E2DC23F43FA500803D5D /* Credentials.m */,
+				271455C623F548F700188403 /* CredentialImportController.h */,
+				271455C723F548F700188403 /* CredentialImportController.m */,
+				271455C023F53D1700188403 /* CredentialsController.h */,
+				271455C123F53D1D00188403 /* CredentialsController.m */,
+				271455CC23F54BF500188403 /* ChallengeHandler.h */,
+				271455CD23F54BF500188403 /* ChallengeHandler.m */,
+				271455C923F5492700188403 /* ServerTrustChallengeHandler.h */,
+				271455CA23F5498100188403 /* ServerTrustChallengeHandler.m */,
+				271455CF23F5507500188403 /* DebugOptions.h */,
+				271455D023F5507500188403 /* DebugOptions.m */,
+				271455D223F56D5500188403 /* CredentialImportController.xib */,
+				271CAFDE23F7C813002E2D6B /* ClientIdentityController.h */,
+				271CAFDD23F7C812002E2D6B /* ClientIdentityController.m */,
+				271CAFE023F7C82A002E2D6B /* ClientIdentityController.xib */,
+			);
+			path = Credentials;
 			sourceTree = "<group>";
 		};
 		2765576A23D9CC46006FAA96 /* Bookmarks */ = {
@@ -723,7 +783,9 @@
 				270910EE23D8188E00F45F7A /* SearchEnginesSBrowser.plist in Resources */,
 				27A3E4BB23DC24E600695180 /* FavIconCellSBrowser.xib in Resources */,
 				2765578223D9DD36006FAA96 /* BookmarksViewController.xib in Resources */,
+				271455D323F56D5500188403 /* CredentialImportController.xib in Resources */,
 				270ADCB823E0052D0071E9E4 /* hsts_preload.plist in Resources */,
+				271CAFE123F7C82A002E2D6B /* ClientIdentityController.xib in Resources */,
 				270ADCB423E001E20071E9E4 /* urlblocker.json in Resources */,
 				273D8A8423D5840400ADA171 /* LaunchScreen.storyboard in Resources */,
 				27A3E4C323DC27A400695180 /* SBSecurityLevelCell.xib in Resources */,
@@ -874,6 +936,7 @@
 				271180CE23D8675F00EA331F /* BrowserViewController+Tabs.swift in Sources */,
 				2710B5CF23DEBFC700F97C73 /* SBBridge.m in Sources */,
 				27EC09F323DABD6D00D81B14 /* UIViewController+Helper.swift in Sources */,
+				271455CE23F54BF600188403 /* ChallengeHandler.m in Sources */,
 				27E9AE1923D98AA800BF0A56 /* WKWebView+Helper.swift in Sources */,
 				2710904523DC11B300B503BE /* AlertSBrowser.swift in Sources */,
 				273D8A7F23D583ED00ADA171 /* SBrowser.xcdatamodeld in Sources */,
@@ -888,6 +951,7 @@
 				2710B5C923DEBBEA00F97C73 /* SBMigration.swift in Sources */,
 				27E00E4323E1675F00E88CB5 /* OtherHelper.swift in Sources */,
 				27EC0D9623DB302700D81B14 /* CookieJar.m in Sources */,
+				271455C223F53D1E00188403 /* CredentialsController.m in Sources */,
 				27EC0D6C23DB301D00D81B14 /* JAHPCanonicalRequest.m in Sources */,
 				2710B5CC23DEBCC700F97C73 /* SBOldBookmark.m in Sources */,
 				2765576C23D9CC72006FAA96 /* BookmarksViewController.swift in Sources */,
@@ -895,6 +959,7 @@
 				2710904123DC0C9B00B503BE /* SBTabSecurity.swift in Sources */,
 				270910FB23D8606300F45F7A /* TabCellSBrowser.swift in Sources */,
 				27A3E4CF23DC2E3C00695180 /* OtherClasses.swift in Sources */,
+				2740E2D923F43E4A00803D5D /* SBProfilesVC.swift in Sources */,
 				27A3E4CB23DC2BB500695180 /* SBSecurityShield.swift in Sources */,
 				27EC0A3C23DB0DA700D81B14 /* FavIconRowSBrowser.swift in Sources */,
 				2708229423E846CD00061A42 /* RadioButton.swift in Sources */,
@@ -903,17 +968,23 @@
 				2710B5DE23DEF75400F97C73 /* SBSearchTableVC.swift in Sources */,
 				27A3E4C223DC27A400695180 /* SBSecurityLevelCell.swift in Sources */,
 				27A3E4C523DC288D00695180 /* UIColor+Helper.swift in Sources */,
+				271CAFDF23F7C813002E2D6B /* ClientIdentityController.m in Sources */,
 				272B566123E303BE00666D1D /* SBHomePageSettingVC.swift in Sources */,
 				27EC0D9223DB302700D81B14 /* HTTPSEverywhere.m in Sources */,
+				271455C523F548E500188403 /* PickListController.m in Sources */,
 				27EC0D6923DB301D00D81B14 /* JAHPAuthenticatingHTTPProtocol.m in Sources */,
 				27E00E4123E160D600E88CB5 /* SBHistoryTempVC.swift in Sources */,
 				272BD76123D734EC00BE69A1 /* GlobalObjects.swift in Sources */,
+				271455D123F5507500188403 /* DebugOptions.m in Sources */,
 				273D8A7923D583ED00ADA171 /* ViewController.swift in Sources */,
 				27EC0D6723DB301D00D81B14 /* JAHPQNSURLSessionDemux.m in Sources */,
+				271455C823F548F700188403 /* CredentialImportController.m in Sources */,
+				2740E2DD23F43FA500803D5D /* Credentials.m in Sources */,
 				27405AAE23ED974C00DB4B38 /* PKCS12.swift in Sources */,
 				270910F223D820DE00F45F7A /* BrowserViewController+Toolbar.swift in Sources */,
 				270910F023D81EC300F45F7A /* UISearchBar+Helper.swift in Sources */,
 				270910EB23D812E200F45F7A /* SettingsSBrowser.swift in Sources */,
+				2718EB8823FAB9A00053778C /* SBProfilesInfoVC.swift in Sources */,
 				27EC0D9023DB302700D81B14 /* HTTPSEverywhereRule.m in Sources */,
 				2765578023D9DB61006FAA96 /* Bundle+Helper.swift in Sources */,
 				2710B5DC23DEF70600F97C73 /* SBCustomSiteVC.swift in Sources */,
@@ -936,6 +1007,7 @@
 				27EC0D6A23DB301D00D81B14 /* CertificateAuthentication.m in Sources */,
 				273D8A7523D583ED00ADA171 /* AppDelegate.swift in Sources */,
 				27A3E4CD23DC2CC100695180 /* SBrowserSecurityVC.swift in Sources */,
+				271455CB23F5498100188403 /* ServerTrustChallengeHandler.m in Sources */,
 				27EC0D8B23DB302700D81B14 /* HTTPSEverywhereRuleController.m in Sources */,
 				273D8A7723D583ED00ADA171 /* SceneDelegate.swift in Sources */,
 				2765577423D9CE47006FAA96 /* BookmarkSBrowser.swift in Sources */,

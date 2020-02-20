@@ -10,8 +10,68 @@ import UIKit
 
 internal var sharedBrowserVC: BrowserViewController?
 
-class BrowserViewController: UIViewController, TabSBrowserDelegate {
+
+
+class BrowserViewController: UIViewController, TabSBrowserDelegate, CredentialImportControllerDelegate, ClientIdentityControllerDelegate {
+  
+
+//var challenge: URLAuthenticationChallenge?
+    var identity: SecIdentity?
+    var identityChoosen = true
+    func identityView(_ controller: ClientIdentityController!, didChoose identity: SecIdentity!) {
+        identityChoosen = true
+        
+        self.identity = identity
+        dismiss(animated: true)
+        return
+        
+//        var credential: URLCredential?
+//        var persistence: URLCredential.Persistence
+//        persistence = DebugOptions.shared().credentialPersistence
+//        credential = URLCredential(identity: identity!, certificates: nil, persistence: persistence)
+       // challenge?.sender?.use(credential!, for: challenge!)
+        
+    }
+    func _clientIdentityResolvedWithIdentity(identity: SecIdentity!){//todo hatao
+        print("called")
+    }
     
+    
+    
+func credentialImport(_ credentialImport: CredentialImportController!, didImportWith status: CredentialImportStatus) {
+    
+    //dismissModalViewController(animated: true)
+    dismiss(animated: true)
+    
+    switch status {
+        case kCredentialImportStatusCancelled:
+            print("Import cancelled")
+        case kCredentialImportStatusFailed:
+           // var alert: UIAlertView?
+
+         //   _updateStatus("Import failed")
+
+//            alert = UIAlertView(title: "Import Failed", message: "", delegate: nil, cancelButtonTitle: "Dismiss", otherButtonTitles: "")
+//            assert(alert != nil)
+//
+//            alert?.show()
+        
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: "Import Failed", message: "Unsupported Content Type!", preferredStyle: UIAlertController.Style.alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            self.present(alert, animated: false, completion: nil)
+            //self.present(alert, self.view)
+        }
+        
+        
+        case kCredentialImportStatusSucceeded:
+            //updateStatus("Import succeeded")
+            Credentials.shared().refresh()
+        default:
+            break
+    }
+
+}
     
     
     @objc
@@ -134,7 +194,7 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
     
     
     
-    
+    var blackLayer = UIView()
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -359,7 +419,10 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
         case btnTabs:
             showOverview()
         case btnSettings:
-            present(SBSettingsVC.instantiate())
+            let vc = SBSettingsVC.instantiate()
+           // vc.modalPresentationStyle = .overFullScreen
+           // vc.modalTransitionStyle = .crossDissolve
+            present(vc)
             break
         case btnAddTab:
             newTabFromOverview()
@@ -677,6 +740,49 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
         updateReloadBt()
     }
     
-    
+    @objc func ShowBlackLayer(){
+        blackLayer = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: UIScreen.main.bounds.size.height))
+        blackLayer.backgroundColor = UIColor(red: 0/255, green: 0/255, blue: 0/255, alpha: 0.85)
+        let label = UILabel(frame: CGRect(origin: CGPoint(x: (UIScreen.main.bounds.size.width/2)-75, y: UIScreen.main.bounds.size.height/2), size: CGSize(width: 150, height: 25)))
+      //  label.font = UIFont(name: label.font.fontName, size: 20)
+        label.textColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 1)
+        label.text = "Receiving"
+        let customFont = UIFont(name: "System", size: 30)
+        label.font = customFont
+        //fromLabel.numberOfLines = 1
+        label.baselineAdjustment = .alignBaselines // or UIBaselineAdjustmentAlignCenters, or UIBaselineAdjustmentNone
+        label.textAlignment = .center
+        let loadingIndicator: UIActivityIndicatorView = UIActivityIndicatorView(frame: CGRect(x: (UIScreen.main.bounds.size.width/2)-50, y: (UIScreen.main.bounds.size.height/2)+50, width: 100, height: 100) )
+        loadingIndicator.hidesWhenStopped = true
+        loadingIndicator.style = UIActivityIndicatorView.Style.whiteLarge
+        loadingIndicator.startAnimating();
+        blackLayer.addSubview(loadingIndicator)
+        blackLayer.addSubview(label)
+        self.view.addSubview(blackLayer)
+       // print("log: ###################### Step 1 : Receiving Start")
+    }
+    @objc func HideBlackLayer(){
+      //  print("log: ###################### Step 1 : Receiving End")
+        DispatchQueue.main.async {
+            self.blackLayer.removeFromSuperview()
+        }
+    }
+    @objc func ShowFailedAlert(){
+//        DispatchQueue.main.async {
+//            let av = UIAlertController(title: "Get Failed", message: "", preferredStyle: .alert)
+//            av.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
+//
+//                return
+//            }))
+//          //  av.modalPresentationStyle = .popover//.fullScreen//.popover
+//            self.present(av, self.view)
+//        }
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: "Get Failed", message: "Unsupported Content Type!", preferredStyle: UIAlertController.Style.alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            self.present(alert, animated: false, completion: nil)
+            //self.present(alert, self.view)
+        }
+    }
 
 } //End of class

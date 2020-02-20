@@ -10,6 +10,7 @@ import Foundation
 
 extension TabSBrowser: WKNavigationDelegate, WKUIDelegate {
     
+    
     /**
     Must match injected.js
     */
@@ -19,6 +20,19 @@ extension TabSBrowser: WKNavigationDelegate, WKUIDelegate {
 
     private static let universalLinksWorkaroundKey = "yayprivacy"
     
+    func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+        if navigationAction.targetFrame?.isMainFrame == nil {
+
+            //let viewController = UIApplication.shared.keyWindow!.rootViewController as! BrowserViewController
+            //viewController.newTabFromOverview()
+      
+            webView.load(navigationAction.request)
+            //let tabb = viewController.addNewTabSBrowser(navigationAction.request.url, forRestoration: false, transition: .default)
+            
+            //return tabb?.webView
+        }
+        return nil
+    }
     
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         /*
@@ -74,8 +88,66 @@ extension TabSBrowser: WKNavigationDelegate, WKUIDelegate {
                 
         decisionHandler(.allow)
     }
-    
+     
+
+//    class func supportedMIMETypes() -> Set<AnyHashable>? {
+//
+//        if supportedMIMETypesSSupportedCredentialTypes == nil {
+//            supportedMIMETypesSSupportedCredentialTypes = Set<AnyHashable>(objects: "application/x-pkcs12", "application/x-x509-ca-cert", "application/pkix-cert", nil)
+//            assert(supportedMIMETypesSSupportedCredentialTypes != nil)
+//        }
+//        return supportedMIMETypesSSupportedCredentialTypes
+//    }
     func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
+        
+        //ps//
+        let supportedMIMETypesSSupportedCredentialTypes = ["application/x-pkcs12", "application/x-x509-ca-cert", "application/pkix-cert"]
+        
+        if let mimeType = navigationResponse.response.mimeType {
+            // do some thing with the MIME type
+            var fileMIMEType = "" //yeh
+
+            fileMIMEType = mimeType.lowercased() 
+            if fileMIMEType == nil {
+             //   _stopReceive(withStatus: "No Content-Type!")
+            } else if !supportedMIMETypesSSupportedCredentialTypes.contains(fileMIMEType) {
+             //   _stopReceive(withStatus: "Unsupported Content-Type (\(fileMIMEType))")
+            } else {
+                //  _updateStatus("Response OK.")
+                
+                print("has mime type")
+                let av = UIAlertController(title: "", message: "This website is trying to download a configuration profile. Do you want to allow this?", preferredStyle: .alert)
+                av.addAction(UIAlertAction(title: "Ignore", style: .default, handler: { (action) in
+                //    decisionHandler(.cancel)
+                    
+                }))
+                av.addAction(UIAlertAction(title: "Allow", style: .cancel, handler: { _ in
+                    let cc :CredentialsController = CredentialsController()
+  
+                    
+                    // If we have JavaScript blocked, these will be empty.
+                    let finalUrl = navigationResponse.response.url
+                    let viewController = UIApplication.shared.keyWindow!.rootViewController as! BrowserViewController
+             
+                    viewController.ShowBlackLayer()
+                    print("log: ###################### Step 1 : Receiving will Start")
+                    //mj//We will be sending the response from here and just download the file and use it.
+                    cc._startReceive("\(finalUrl!)", obj: viewController, resp:navigationResponse.response as! HTTPURLResponse )
+                    
+             
+                }))
+                //self.present(av, animated: true, completion: nil)
+//                NotificationCenter.default.addObserver(self, selector: #selector(ShowImportVc), name: Notification.Name("importstart"), object: nil)
+                
+                self.tabDelegate?.presentSBTab(av, nil)//vishnu
+                decisionHandler(.cancel)
+                return
+            }
+            
+        } else {
+            // response has no MIME type, do some special handling
+        }
+        //ps//
         
 //        guard let response = navigationResponse.response as? HTTPURLResponse,
 //          let url = navigationResponse.response.url else {
@@ -396,14 +468,82 @@ extension TabSBrowser: WKNavigationDelegate, WKUIDelegate {
                     AppDelegate.shared?.sslCertCache.setObject(certificate, forKey: challenge.protectionSpace.host as NSString)
                 }
                 completionHandler(.useCredential, credential)
-            }else{
+            }
+            
+            else{
                  //completionHandler(.useCredential, nil)
                 completionHandler(.performDefaultHandling, nil)
             }
             
             return
             //completionHandler(.performDefaultHandling, nil);
-        }else{
+        }
+        else if authenticationMethod == NSURLAuthenticationMethodClientCertificate{
+        //mj// we need to implement this and check the identies
+            var credential: URLCredential?
+            // If we got an identity, create a credential for that identity.
+            let identities = Credentials.shared().identities! as NSArray
+            
+            if identities.count != 0{
+                if identities.count == 1{
+                    let identity = identities[0]
+                    var persistence: URLCredential.Persistence
+                    persistence = DebugOptions.shared().credentialPersistence
+                    credential = URLCredential(identity: identity as! SecIdentity, certificates: nil, persistence: persistence)
+
+                    completionHandler(URLSession.AuthChallengeDisposition.useCredential, credential);
+                }else{
+                    
+                    let listobj = ClientIdentityController(challenge: challenge)
+                    let rootviewController = UIApplication.shared.keyWindow!.rootViewController as! BrowserViewController
+                    rootviewController.identityChoosen = false
+                    listobj?.delegate = rootviewController
+                    rootviewController.identity = nil
+                    
+                    
+//                    listobj!.modalPresentationStyle = .popover
+//                    listobj?.isModalInPopover = true
+                    
+             //       rootviewController.present(listobj!, self)
+                    
+                        rootviewController.present(listobj!, animated: true)//, completion: { () in
+//
+//                        print("")
+//                        completionHandler(.cancelAuthenticationChallenge, nil);
+//                    })
+               
+                    DispatchQueue.global().async {
+                        while rootviewController.identityChoosen == false{
+                            DispatchQueue.main.async {
+                                
+                            }
+                        }
+                        if rootviewController.identity != nil{
+                            var credential: URLCredential?
+                            var persistence: URLCredential.Persistence
+                            persistence = DebugOptions.shared().credentialPersistence
+                            credential = URLCredential(identity: rootviewController.identity!, certificates: nil, persistence: persistence)
+                            completionHandler(URLSession.AuthChallengeDisposition.useCredential, credential);
+                        }else{
+                            completionHandler(.cancelAuthenticationChallenge, nil);
+                        }
+                        
+                        //completionHandler(.cancelAuthenticationChallenge, nil);
+                        print("completionHandler")
+                    }
+                    
+                    
+                    //challenge.sender?.use(credential, for: challenge)
+                
+                   // completionHandler(.cancelAuthenticationChallenge, nil);
+                    //listobj?.modalPresentationStyle = .
+                    
+                }
+            }else{
+                completionHandler(.cancelAuthenticationChallenge, nil);
+            }
+        }
+        else{
             progress = 0
             NotificationCenter.default.post(name: NSNotification.Name(kWebViewFinishOrError), object: nil, userInfo: nil)
             completionHandler(.cancelAuthenticationChallenge, nil);
@@ -708,6 +848,24 @@ extension TabSBrowser: WKNavigationDelegate, WKUIDelegate {
     }
   
     
+//    @objc func ShowImportVc(notification: Notification){
+//
+//
+//        if let mimetype = notification.userInfo!["mimetype"] as? String {
+//            if let fileData = notification.userInfo!["fileData"] as? Data {
+//                if let url = notification.userInfo!["url"] as? URL {
+//                    let vc = CredentialImportController(credentialData: fileData, type: mimetype)
+//                    vc!.delegate = self
+//                    vc!.origin = url
+//                    //  presentModalViewController(vc, animated: true)
+//                    self.tabDelegate?.presentSBTab(vc!, nil)//vishnu
+//                }
+//            }
+//        }
+//
+//    }
     
-    
+
+            
+        
 }

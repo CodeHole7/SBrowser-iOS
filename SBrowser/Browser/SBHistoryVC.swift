@@ -13,15 +13,22 @@ class SBHistoryVC: UITableViewController {
     private var history = [HistoryItem]()
     var sbSettingVC: SBSettingsVC?
 
-    @objc
-    class func instantiate() -> UINavigationController {
-        let vc = SBHistoryVC()
+  //  @objc
+//    class func instantiate() -> UINavigationController {
+//        let vc = SBHistoryVC()
+//        if let arrayOfDict = UserDefaults.standard.value(forKey: kOldHisotries) as? [NSDictionary] {
+//              for dict in arrayOfDict {
+//                  vc.history.append(HistoryItem(dictionary: dict))
+//              }
+//          }
+//        return UINavigationController(rootViewController: vc)
+//    }
+    func ReloadData(){
         if let arrayOfDict = UserDefaults.standard.value(forKey: kOldHisotries) as? [NSDictionary] {
             for dict in arrayOfDict {
-                vc.history.append(HistoryItem(dictionary: dict))
+                self.history.append(HistoryItem(dictionary: dict))
             }
         }
-        return UINavigationController(rootViewController: vc)
     }
     
     private lazy var doneBt = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(_dismiss))
@@ -32,7 +39,7 @@ class SBHistoryVC: UITableViewController {
         super.viewDidLoad()
 
         navigationItem.title = NSLocalizedString("History", comment: "")
-        navigationItem.leftBarButtonItem = doneBt
+      //  navigationItem.leftBarButtonItem = doneBt
         navigationItem.rightBarButtonItem = deleteAllBt
     }
     
@@ -103,9 +110,9 @@ class SBHistoryVC: UITableViewController {
         sharedBrowserVC?.addNewTabSBrowser (
         self.history[indexPath.row].url, transition: .notAnimated) { _ in
             self.dismiss(animated: true, completion: {
-                self.sbSettingVC?.dismiss(animated: true, completion: {
-                    
-                })
+//                self.sbSettingVC?.dismiss(animated: true, completion: {
+//                    
+//                })
             })
         }
         

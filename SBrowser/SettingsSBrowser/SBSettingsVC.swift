@@ -47,19 +47,31 @@ class SBSettingsVC: SBFixedFormVC {
         
         form
             
-            +++ homepageRow
+            
+            +++ Section(header: NSLocalizedString("GENERAL", comment: "Section header"),
+                                   footer: NSLocalizedString("",
+                                                             comment: ""))
+            
+           <<< homepageRow
                 .onCellSelection({ (_, _) in
-                    self.present(SBHomePageSettingVC.instantiate(), nil)
+                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                    let HomePageSettingVC = storyboard.instantiateViewController(withIdentifier: "SBHomePageSettingVC")
+                    self.navigationController?.pushViewController(HomePageSettingVC, animated: true)
+                   // self.present(SBHomePageSettingVC.instantiate(), nil)
                 })
             
-            +++ historyRow
+           <<< historyRow
                 .onCellSelection({ (_, _) in
-                    let navController = SBHistoryVC.instantiate()
-                    (navController.viewControllers.first as? SBHistoryVC)?.sbSettingVC = self
-                    self.present(navController, nil)
+//                    let navController = SBHistoryVC.instantiate()
+//                    (navController.viewControllers.first as? SBHistoryVC)?.sbSettingVC = self
+//                    self.present(navController, nil)
+                    let historyvc = SBHistoryVC()
+                    historyvc.ReloadData()
+                    historyvc.sbSettingVC = self
+                    self.navigationController?.pushViewController(historyvc, animated: true)
                 })
             
-            +++ defaultSecurityRow
+           <<< defaultSecurityRow
                 .onCellSelection { _, _ in
                     self.navigationController?.pushViewController(
                         SBSecurityVC(), animated: true)
@@ -141,7 +153,22 @@ class SBSettingsVC: SBFixedFormVC {
                 self.navigationController?.pushViewController(
                     SBStorageFirstVC(), animated: true)
             }
-            
+            //ps
+            <<< LabelRow() {
+                $0.title = NSLocalizedString("Profiles", comment: "Option title")
+            //    $0.selectorTitle = $0.title
+
+                
+                $0.cell.accessoryType = .disclosureIndicator
+              //  $0.cell.selectionStyle = .default
+                $0.cell.textLabel?.numberOfLines = 0
+            }
+
+            .onCellSelection { _, _ in
+                self.navigationController?.pushViewController(
+                    SBProfilesVC(), animated: true)
+            }
+            //ps
             <<< PushRow<SettingsSBrowser.TlsVersion>() {
                 $0.title = NSLocalizedString("TLS Version", comment: "Option title")
                 $0.selectorTitle = $0.title

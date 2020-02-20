@@ -22,4 +22,8 @@
 #import "CookieJar.h"
 #import "CertificateAuthentication.h"
 #import "HSTSCache.h"
-
+#import "Credentials.h"
+#import "CredentialsController.h"
+#import "CredentialImportController.h"
+#import "DebugOptions.h"
+#import "ClientIdentityController.h"

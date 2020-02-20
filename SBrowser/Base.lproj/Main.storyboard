@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15400" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Xv8-Sf-mqf">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Xv8-Sf-mqf">
     <device id="retina5_5" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15404"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -289,8 +289,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="center" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bv6-if-nsc" customClass="RadioButton" customModule="SBrowser" customModuleProvider="target">
-                                <rect key="frame" x="30" y="66.666666666666671" width="24" height="24"/>
+                            <button hidden="YES" opaque="NO" contentMode="center" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bv6-if-nsc" customClass="RadioButton" customModule="SBrowser" customModuleProvider="target">
+                                <rect key="frame" x="30" y="236.66666666666666" width="24" height="23.999999999999972"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="24" id="Iom-LK-oUJ"/>
                                     <constraint firstAttribute="height" constant="24" id="QOe-7T-85R"/>
@@ -310,12 +310,9 @@
                                         <real key="value" value="24"/>
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
-                                <connections>
-                                    <action selector="clickedDefaultHomepage:" destination="7OK-N8-aFt" eventType="touchUpInside" id="xAD-MM-gr7"/>
-                                </connections>
                             </button>
-                            <button opaque="NO" contentMode="center" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2pK-Ti-5st" customClass="RadioButton" customModule="SBrowser" customModuleProvider="target">
-                                <rect key="frame" x="30" y="100.66666666666667" width="24" height="24"/>
+                            <button hidden="YES" opaque="NO" contentMode="center" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2pK-Ti-5st" customClass="RadioButton" customModule="SBrowser" customModuleProvider="target">
+                                <rect key="frame" x="30" y="270.66666666666669" width="24" height="24"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="24" id="0Lg-tW-Hfj"/>
                                     <constraint firstAttribute="height" constant="24" id="iLK-lf-aUB"/>
@@ -335,47 +332,44 @@
                                         <real key="value" value="24"/>
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
-                                <connections>
-                                    <action selector="clickedCustomHomepage:" destination="7OK-N8-aFt" eventType="touchUpInside" id="GHl-OL-DEN"/>
-                                </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="SBrowser Home (Default)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pgh-GQ-doS">
-                                <rect key="frame" x="63.999999999999986" y="68.333333333333329" width="194.66666666666663" height="21"/>
+                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="SBrowser Home (Default)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pgh-GQ-doS">
+                                <rect key="frame" x="63.999999999999986" y="238.33333333333334" width="194.66666666666663" height="21.000000000000028"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Custom Homepage" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IhX-gG-3fc">
-                                <rect key="frame" x="64" y="102.33333333333333" width="148" height="21"/>
+                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Custom Homepage" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IhX-gG-3fc">
+                                <rect key="frame" x="64" y="272.33333333333331" width="148" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="bezel" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="mRE-Mh-0sh">
-                                <rect key="frame" x="64" y="247.33333333333337" width="290" height="27"/>
+                            <textField hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="bezel" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="mRE-Mh-0sh">
+                                <rect key="frame" x="64" y="417.33333333333331" width="290" height="27"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" keyboardType="URL" returnKeyType="done"/>
                             </textField>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Current Homepage:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tcp-rg-RZx">
-                                <rect key="frame" x="30" y="30" width="163.66666666666666" height="21.666666666666671"/>
+                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Current Homepage:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tcp-rg-RZx">
+                                <rect key="frame" x="30" y="200" width="163.66666666666666" height="21.666666666666657"/>
                                 <fontDescription key="fontDescription" type="system" weight="medium" pointSize="18"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Home Page:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NK3-FH-ste">
-                                <rect key="frame" x="63.999999999999993" y="143.33333333333334" width="93.333333333333314" height="21"/>
+                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Home Page:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NK3-FH-ste">
+                                <rect key="frame" x="63.999999999999993" y="313.33333333333331" width="93.333333333333314" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="z2J-yM-nwZ">
-                                <rect key="frame" x="165.33333333333334" y="153.66666666666666" width="0.0" height="0.0"/>
+                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="z2J-yM-nwZ">
+                                <rect key="frame" x="165.33333333333334" y="323.66666666666669" width="0.0" height="0.0"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="d7t-JH-TDE">
-                                <rect key="frame" x="64" y="174.33333333333334" width="143" height="24"/>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="d7t-JH-TDE">
+                                <rect key="frame" x="64" y="344.33333333333331" width="143" height="24"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="24" id="7fW-G3-lWZ"/>
                                 </constraints>
@@ -396,12 +390,9 @@
                                         <real key="value" value="24"/>
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
-                                <connections>
-                                    <action selector="clickedUseCurrentPage:" destination="7OK-N8-aFt" eventType="touchUpInside" id="sv2-pM-R7Z"/>
-                                </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ycU-xE-U0i">
-                                <rect key="frame" x="64" y="208.33333333333334" width="194" height="34"/>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ycU-xE-U0i">
+                                <rect key="frame" x="64" y="378.33333333333331" width="194" height="34"/>
                                 <state key="normal" title="Add Custom Homepage">
                                     <color key="titleColor" red="0.0" green="0.38823529410000002" blue="0.88235294119999996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
@@ -419,31 +410,51 @@
                                         <real key="value" value="24"/>
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
-                                <connections>
-                                    <action selector="clickedAddCustomHomepage:" destination="7OK-N8-aFt" eventType="touchUpInside" id="XAs-5M-j0A"/>
-                                </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="A3J-XW-ZGx">
-                                <rect key="frame" x="364" y="245.66666666666663" width="30" height="30"/>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="A3J-XW-ZGx">
+                                <rect key="frame" x="364" y="415.66666666666669" width="30" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="r5D-dC-Qk7"/>
                                     <constraint firstAttribute="width" constant="30" id="vpb-dX-ACT"/>
                                 </constraints>
                                 <state key="normal" title="Set"/>
-                                <connections>
-                                    <action selector="clickedSet:" destination="7OK-N8-aFt" eventType="touchUpInside" id="Qys-nv-C3m"/>
-                                </connections>
                             </button>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="2" translatesAutoresizingMaskIntoConstraints="NO" id="cAt-38-LWg">
+                                <rect key="frame" x="30" y="30" width="354" height="31"/>
+                                <color key="backgroundColor" red="0.93717288970000001" green="0.93730789420000005" blue="0.95674890280000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="aMD-R6-9Qd"/>
+                                </constraints>
+                                <segments>
+                                    <segment title="DEFAULT"/>
+                                    <segment title="USE CURRENT"/>
+                                    <segment title="CUSTOM"/>
+                                </segments>
+                                <color key="tintColor" red="0.0" green="0.4784809947" blue="0.99987572430000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="selectedSegmentTintColor" red="0.0" green="0.4784809947" blue="0.99987572430000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <connections>
+                                    <action selector="segmentControlClicked:" destination="7OK-N8-aFt" eventType="valueChanged" id="fJA-t8-nhQ"/>
+                                </connections>
+                            </segmentedControl>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="Umf-YG-oA8">
+                                <rect key="frame" x="0.0" y="100" width="414" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="2UT-RD-1ci"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
                         </subviews>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <color key="backgroundColor" red="0.93717288970000001" green="0.93730789420000005" blue="0.95674890280000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="NK3-FH-ste" firstAttribute="top" secondItem="IhX-gG-3fc" secondAttribute="bottom" constant="20" id="08O-l6-H6O"/>
                             <constraint firstItem="A3J-XW-ZGx" firstAttribute="centerY" secondItem="mRE-Mh-0sh" secondAttribute="centerY" id="0Iw-fV-IDf"/>
+                            <constraint firstItem="Umf-YG-oA8" firstAttribute="top" secondItem="cAt-38-LWg" secondAttribute="bottom" constant="40" id="9S7-n9-cRQ"/>
                             <constraint firstItem="IhX-gG-3fc" firstAttribute="centerY" secondItem="2pK-Ti-5st" secondAttribute="centerY" id="ClR-1k-K1m"/>
                             <constraint firstItem="IhX-gG-3fc" firstAttribute="leading" secondItem="Pgh-GQ-doS" secondAttribute="leading" id="Fhl-Lg-tdN"/>
                             <constraint firstItem="2pK-Ti-5st" firstAttribute="top" secondItem="bv6-if-nsc" secondAttribute="bottom" constant="10" id="GyC-Ke-y02"/>
                             <constraint firstItem="Pgh-GQ-doS" firstAttribute="leading" secondItem="bv6-if-nsc" secondAttribute="trailing" constant="10" id="Hdl-JJ-lfg"/>
-                            <constraint firstItem="Tcp-rg-RZx" firstAttribute="top" secondItem="8PV-jO-NeH" secondAttribute="top" constant="30" id="Lh2-ne-IZB"/>
+                            <constraint firstItem="Tcp-rg-RZx" firstAttribute="top" secondItem="8PV-jO-NeH" secondAttribute="top" constant="200" id="Lh2-ne-IZB"/>
                             <constraint firstItem="d7t-JH-TDE" firstAttribute="top" secondItem="NK3-FH-ste" secondAttribute="bottom" constant="10" id="Mwu-1G-CjQ"/>
                             <constraint firstItem="z2J-yM-nwZ" firstAttribute="centerY" secondItem="NK3-FH-ste" secondAttribute="centerY" id="NQC-HD-97Z"/>
                             <constraint firstItem="bv6-if-nsc" firstAttribute="leading" secondItem="Tcp-rg-RZx" secondAttribute="leading" id="Oqa-95-x6x"/>
@@ -453,28 +464,25 @@
                             <constraint firstItem="A3J-XW-ZGx" firstAttribute="leading" secondItem="mRE-Mh-0sh" secondAttribute="trailing" constant="10" id="Wol-91-SQX"/>
                             <constraint firstItem="Pgh-GQ-doS" firstAttribute="centerY" secondItem="bv6-if-nsc" secondAttribute="centerY" id="Wyy-LB-THL"/>
                             <constraint firstItem="bv6-if-nsc" firstAttribute="top" secondItem="Tcp-rg-RZx" secondAttribute="bottom" constant="15" id="YJE-dt-SCx"/>
+                            <constraint firstItem="Umf-YG-oA8" firstAttribute="trailing" secondItem="8PV-jO-NeH" secondAttribute="trailing" id="bpW-qg-vsH"/>
+                            <constraint firstItem="cAt-38-LWg" firstAttribute="leading" secondItem="8PV-jO-NeH" secondAttribute="leading" constant="30" id="d4y-He-ejt"/>
+                            <constraint firstItem="Umf-YG-oA8" firstAttribute="leading" secondItem="8PV-jO-NeH" secondAttribute="leading" id="fub-oZ-xDo"/>
                             <constraint firstItem="2pK-Ti-5st" firstAttribute="leading" secondItem="bv6-if-nsc" secondAttribute="leading" id="l2c-ep-b2X"/>
                             <constraint firstItem="z2J-yM-nwZ" firstAttribute="leading" secondItem="NK3-FH-ste" secondAttribute="trailing" constant="8" id="mjW-nh-QNb"/>
                             <constraint firstItem="mRE-Mh-0sh" firstAttribute="leading" secondItem="ycU-xE-U0i" secondAttribute="leading" id="n8c-xO-kX0"/>
                             <constraint firstItem="8PV-jO-NeH" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="z2J-yM-nwZ" secondAttribute="trailing" constant="5" id="nht-vb-mwo"/>
                             <constraint firstItem="8PV-jO-NeH" firstAttribute="trailing" secondItem="A3J-XW-ZGx" secondAttribute="trailing" constant="20" id="ody-wH-Y8v"/>
                             <constraint firstItem="NK3-FH-ste" firstAttribute="leading" secondItem="IhX-gG-3fc" secondAttribute="leading" id="p8R-J3-17f"/>
+                            <constraint firstItem="8PV-jO-NeH" firstAttribute="trailing" secondItem="cAt-38-LWg" secondAttribute="trailing" constant="30" id="tGB-9g-oBM"/>
+                            <constraint firstItem="cAt-38-LWg" firstAttribute="top" secondItem="8PV-jO-NeH" secondAttribute="top" constant="30" id="upR-bi-9H8"/>
                             <constraint firstItem="mRE-Mh-0sh" firstAttribute="top" secondItem="ycU-xE-U0i" secondAttribute="bottom" constant="5" id="whY-SO-Yai"/>
                             <constraint firstItem="d7t-JH-TDE" firstAttribute="leading" secondItem="NK3-FH-ste" secondAttribute="leading" id="x6b-mQ-guz"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="8PV-jO-NeH"/>
                     </view>
                     <connections>
-                        <outlet property="btnAddCustomHomepage" destination="ycU-xE-U0i" id="ydF-Se-OzJ"/>
-                        <outlet property="btnCustomHomepage" destination="2pK-Ti-5st" id="FJn-sF-3at"/>
-                        <outlet property="btnDefaultHomepage" destination="bv6-if-nsc" id="oMs-QY-M6B"/>
-                        <outlet property="btnSet" destination="A3J-XW-ZGx" id="zia-SC-eez"/>
-                        <outlet property="btnUseCurrentPage" destination="d7t-JH-TDE" id="5NG-bd-Mv2"/>
-                        <outlet property="lblCurrentHomepageTitle" destination="Tcp-rg-RZx" id="MAX-eU-gX4"/>
-                        <outlet property="lblCustomHomepage" destination="IhX-gG-3fc" id="NNx-12-i7D"/>
-                        <outlet property="lblDefaultHomepage" destination="Pgh-GQ-doS" id="4H3-3h-pmb"/>
-                        <outlet property="lblValueCurrentPage" destination="z2J-yM-nwZ" id="40X-x3-h1j"/>
-                        <outlet property="txtFieldCustomHomepage" destination="mRE-Mh-0sh" id="YeN-mO-JwV"/>
+                        <outlet property="segmentcontrol" destination="cAt-38-LWg" id="eoa-Rh-vhN"/>
+                        <outlet property="textfieldUrl" destination="Umf-YG-oA8" id="C1R-OL-fpz"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cud-kx-gI0" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

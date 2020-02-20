@@ -235,7 +235,9 @@ class TabSBrowser: UIView {
 
         if let url = request.url {
             if url == URL.start {
-                BookmarkSBrowser.updateStartPage()
+                if url.lastPathComponent == "newTab.html"{
+                    BookmarkSBrowser.updateStartPage()
+                }
             }
 
             self.url = url

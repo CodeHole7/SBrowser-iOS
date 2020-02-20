@@ -13,7 +13,12 @@ UICollectionViewDelegateFlowLayout, UICollectionViewDragDelegate,
 UICollectionViewDropDelegate, TabCellSBrowserDelegate {
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        return collectionViewTabs?.isHidden ?? true ? .default : .lightContent
+        if Thread.isMainThread{
+            return collectionViewTabs?.isHidden ?? true ? .default : .lightContent
+        }else{
+            return .lightContent
+        }
+        
     }
 
     @objc func showOverview() {

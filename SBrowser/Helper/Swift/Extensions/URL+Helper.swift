@@ -63,8 +63,12 @@ extension URL {
             return URL.aboutSBrowser
             
         case URL.start:
+            //ps//return nil
+            let url = URL.start
+            if url.lastPathComponent != "newTab.html" {
+                  return URL.start
+            }
             return nil
-            
         default:
             return self
         }
