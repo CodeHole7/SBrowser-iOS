@@ -12,16 +12,99 @@ class SBProfilesInfoVC: UITableViewController {
 
     var identity: SecIdentity?
     var allinfoArr = NSMutableArray()
-    var selectedrow = 0
+   // var selectedrow = 0
+    var isViewFromSettings = true
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        if isViewFromSettings == false{
+            setupnavigationbar()
+        }
+        self.tableView.tableFooterView = UIView()
+        self.tableView.tableFooterView?.isHidden = true
         Getinfo()
+        tableView.backgroundColor = UIColor(red: 229/255, green: 229/255, blue: 229/255, alpha: 1)
+        tableView.register(UINib(nibName: "tblcell_sbProfilesInfo", bundle: nil), forCellReuseIdentifier: "tblcell_sbProfilesInfo")
+    }
+    
+    @objc
+    class func instantiate() -> UINavigationController {
+        let vc = SBProfilesInfoVC()
+//        navigationItem.leftBarButtonItem = UIBarButtonItem(
+//            barButtonSystemItem: .done, target: self, action: #selector(dismsiss_))
+        var navigationcontroller =  UINavigationController(rootViewController: vc)
+       
+        let navigationItem = UINavigationItem()
+        navigationItem.title = "Title"
+        navigationcontroller.navigationBar.items = [navigationItem]
+        return navigationcontroller
+    }
+    @objc private func dismsiss_() {
+        navigationController?.dismiss(animated: true)
+    }
+    
+    @objc private func ImportCurrentIdentity_() {
+        
+        
+      var err = SecItemAdd([
+            kSecValueRef : identity
+            ] as CFDictionary, nil)
+        if err == errSecDuplicateItem {
+            err = 0
+        }
+        if err != 0 {
+            //navigationController?.dismiss(animated: true)
+            let alert = UIAlertController(title: "Import Failed", message: "", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
+                self.navigationController?.dismiss(animated: true)
+                return
+            }))
+            self.present(alert, animated: false, completion: nil)
+        }else{
+            
+            Credentials.shared()?.refresh()
+            let alert = UIAlertController(title: "Successfully Imported", message: "", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
+                self.navigationController?.dismiss(animated: true)
+                return
+            }))
+            self.present(alert, animated: false, completion: nil)
+        }
+    }
+    
+    @objc func setupnavigationbar(){
+        let leftButton =  UIBarButtonItem(title: "Cancel", style:   .plain, target: self, action: #selector(dismsiss_))
+        self.navigationItem.leftBarButtonItem = leftButton;
+        
+        let rightButton =  UIBarButtonItem(title: "Install", style:   .plain, target: self, action: #selector(ImportCurrentIdentity_))
+        self.navigationItem.rightBarButtonItem = rightButton;
+        
+        
+        self.navigationItem.title = "Certificate Information"
+//        let navigationBar = UINavigationBar(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height:44)) // Offset by 20 pixels vertically to take the status bar into account
+//
+//        navigationBar.backgroundColor = UIColor.white
+//
+//
+//        // Create a navigation item with a title
+//        let navigationItem = UINavigationItem()
+//        navigationItem.title = "Title"
+//
+//        // Create left and right button for navigation item
+//         let leftButton =  UIBarButtonItem(title: "Save", style:   .plain, target: self, action: #selector(dismsiss_))
+//
+//        let rightButton = UIBarButtonItem(title: "Right", style: .plain, target: self, action: nil)
+//
+//        // Create two buttons for the navigation item
+//        navigationItem.leftBarButtonItem = leftButton
+//        navigationItem.rightBarButtonItem = rightButton
+//
+//        // Assign the navigation item to the navigation bar
+//        navigationBar.items = [navigationItem]
+//
+//        // Make the navigation bar a subview of the current view controller
+//        self.view.addSubview(navigationBar)
+//        self.view.bringSubviewToFront(navigationBar)
+        
     }
     func Getinfo(){
 
@@ -34,7 +117,7 @@ class SBProfilesInfoVC: UITableViewController {
         
         identitySubject = SecCertificateCopySubjectSummary(identityCertificate!)
         //     assert(identitySubject != nil)
-        SecCertificateCopyData(identityCertificate!)//sara data h isme
+        let certdata = SecCertificateCopyData(identityCertificate!)//sara data h isme
         //   SecCertificateCopyKey(identityCertificate!)
         let publickey = SecCertificateCopyPublicKey(identityCertificate!)
         var serialnumber = SecCertificateCopySerialNumberData(identityCertificate!, nil)
@@ -45,7 +128,7 @@ class SBProfilesInfoVC: UITableViewController {
         
 
         
-        
+        //SecKeyAlgorithm.init(rawValue: <#T##CFString#>)
         
         let certificateData = SecCertificateCopyData(identityCertificate!) as NSData
 
@@ -57,9 +140,79 @@ class SBProfilesInfoVC: UITableViewController {
            }
         let arr = Credentials.shared()?.getCertificateinfo(identityCertificate!) as! NSArray
          allinfoArr =  NSMutableArray(array: arr)
+        if var arr = allinfoArr[0] as? NSMutableArray{
+            let dic:NSDictionary = [
+            "title" : "Common Name (CN)",
+            "item" : "\(identitySubject!)"
+            ]
+
+          var newarrray = [dic]
+            for i in arr{
+                newarrray.append(i as! NSDictionary)
+            }
+            
+            
+            allinfoArr[0] = newarrray
+        }
    //     allinfoArr = Credentials.shared()?.getCertificateinfo(identityCertificate!) as! NSArray
         
-        
+//        if let certificate = SSLCertificate(data: certdata as Data){
+//            print(certificate)
+//
+//        }
+        if let certinfo = SSLCertificate(data: certdata as Data){
+            allinfoArr.removeAllObjects()
+            
+            var issuarinfo = certinfo.issuer
+            var signaturealgo = certinfo.signatureAlgorithm
+            var version = certinfo.version
+            var organizationname = certinfo.evOrgName//var
+            var serialnumber = certinfo.serialNumber
+            var issuedto = certinfo.subject
+            var expiredate = certinfo.validityNotAfter
+            var releasedate = certinfo.validityNotBefore
+            
+            
+            
+            
+            
+            allinfoArr.add(issuedto)
+            
+            
+            let dateFormat1 = DateFormatter()
+            dateFormat1.dateFormat = "MM/dd/yyyy, HH:mm:ss"
+            let strToday = dateFormat1.string(from: releasedate!) // string with yyyy-MM-dd format
+
+            let strexpiryDatey = dateFormat1.string(from: expiredate!) // string with yyyy-MM-dd format
+
+
+            var dic = [
+                "Begins On" : "\(strToday)",
+                "Expires After" : "\(strexpiryDatey)"
+            ]
+            allinfoArr.add(dic)
+            
+            allinfoArr.add(issuarinfo)
+            
+            
+             dic = [
+                "Version" : "\(version ?? 0)",
+                "Serial Number" : "\(serialnumber ?? "")",
+                "Signature Algorithm" : signaturealgo ?? ""
+            ]
+            
+            allinfoArr.add(dic)
+            
+//            let dic2 = [
+//                "title" : "Expires After",
+//                "item" : "\(strexpiryDatey)"
+//            ]
+
+    //        let validityArr = [dic, dic2]
+
+         //   var dictionary =
+           // print(certinfo.nam)
+        }
         
        // print(datadictionary)
         print("email\(emails)")
@@ -140,7 +293,7 @@ class SBProfilesInfoVC: UITableViewController {
         override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
             // #warning Incomplete implementation, return the number of rows
             
-            return (allinfoArr[section] as! NSArray).count
+            return (allinfoArr[section] as! NSDictionary).count
         }
 
         override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -153,8 +306,8 @@ class SBProfilesInfoVC: UITableViewController {
                 
                 if title == nil {
                     title = UILabel()
-                    title?.textColor = UIColor(red: 0.427451, green: 0.427451, blue: 0.447059, alpha: 1)
-                    title?.font = .systemFont(ofSize: 14)
+                    title?.textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
+                    title?.font = .boldSystemFont(ofSize: 14)
                     title?.translatesAutoresizingMaskIntoConstraints = false
                     title?.tag = 666
 
@@ -183,25 +336,25 @@ class SBProfilesInfoVC: UITableViewController {
     //                }
             switch section {
             case 0:
-                title?.text = NSLocalizedString("SUBJECT NAME", comment: "Section header")
-                .localizedUppercase
+                title?.text = NSLocalizedString("Issued To", comment: "Section header")
+               // .localizedUppercase
                 
             case 1:
-                title?.text = NSLocalizedString("ISUER NAME", comment: "Section header")
-                .localizedUppercase
+                title?.text = NSLocalizedString("Period of Validity", comment: "Section header")
+              //  .localizedUppercase
                 
             case 2:
-                title?.text = NSLocalizedString("SERIAL NUMBER", comment: "Section header")
-                .localizedUppercase
+                title?.text = NSLocalizedString("Issued By", comment: "Section header")
+               // .localizedUppercase
                 
             case 3:
-                title?.text = NSLocalizedString("VALIDITY PERIOD", comment: "Section header")
-                .localizedUppercase
+                title?.text = NSLocalizedString("Other", comment: "Section header")
+               // .localizedUppercase
                 
                 
             default:
                 title?.text = NSLocalizedString("VALIDITY PERIOD", comment: "Section header")
-                .localizedUppercase
+            //    .localizedUppercase
             }
                     
 
@@ -214,36 +367,36 @@ class SBProfilesInfoVC: UITableViewController {
         }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "tblcell_sbProfilesInfo") as? tblcell_sbProfilesInfo
         
+        cell!.selectionStyle = .none
+        let dic = allinfoArr[indexPath.section] as? NSDictionary
         
-        let row = indexPath.row;
+//        let group = dic[indexPath.section()] as? OrderedDictionary
+        var allkeys = dic?.allKeys
+        let k = allkeys![indexPath.row]
         
-      //  if indexPath.section == 0  {//
-            let cell = tableView.dequeueReusableCell(withIdentifier: "storageCell")
-                ?? UITableViewCell(style: .value1, reuseIdentifier: "storageCell")
-            
-            cell.selectionStyle = .none
+        cell!.lbltitle?.text = k as! String
+        cell!.lbldetail?.text = dic?[k ?? ""] as? String
 
-            let arr = allinfoArr[indexPath.section] as? NSArray
-            let dic = arr![indexPath.row] as? NSDictionary
-            
-            cell.textLabel?.text = dic!["title"] as? String
-
-            cell.detailTextLabel?.text = dic!["item"] as? String
-
-            return cell
-        //}
         
-        return UITableViewCell()
+        
+//        let dic = arr![indexPath.row] as? NSDictionary
+//        cell?.lbltitle.text = dic!["title"] as? String
+//        cell?.lbldetail.text = dic!["item"] as? String
+        return cell!
+
+    }
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 60
+    }
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if section == 0 || section == 1 {
+            return 56
+        }
+        return 56
         
     }
-        override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-            if section == 0 || section == 1 {
-                return 56
-            }
-           return 56
-      
-        }
 
         
      

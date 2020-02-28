@@ -482,8 +482,36 @@ extension TabSBrowser: WKNavigationDelegate, WKUIDelegate {
         //mj// we need to implement this and check the identies
             var credential: URLCredential?
             // If we got an identity, create a credential for that identity.
-            let identities = Credentials.shared().identities! as NSArray
+            var identities = Credentials.shared().identities! as NSArray
             
+            var newidentitiesararray = NSMutableArray()
+            for i in 0..<identities.count{
+                
+                var identity: SecIdentity?
+                var identityCertificate: SecCertificate?
+                var identitySubject: CFString?
+                
+                identity = (identities[i] as! SecIdentity)
+                _ = SecIdentityCopyCertificate(identity!, &identityCertificate)
+                identitySubject = SecCertificateCopySubjectSummary(identityCertificate!)
+                //     assert(identitySubject != nil)
+                
+                
+                let expiredate = Credentials.shared()?.getCertificateexpireDate(identityCertificate!) as! NSDate
+   
+                
+                
+                let todayDate = Date()
+                if todayDate > expiredate as Date{
+                    //expire
+                }else{
+                    newidentitiesararray.add(identity)
+                }
+                
+            }
+            
+            identities = newidentitiesararray
+
             if identities.count != 0{
                 if identities.count == 1{
                     let identity = identities[0]
@@ -494,7 +522,7 @@ extension TabSBrowser: WKNavigationDelegate, WKUIDelegate {
                     completionHandler(URLSession.AuthChallengeDisposition.useCredential, credential);
                 }else{
                     
-                    let listobj = ClientIdentityController(challenge: challenge)
+                    let listobj = ClientIdentityController(challenge: challenge, identity: identities as! [Any])
                     let rootviewController = UIApplication.shared.keyWindow!.rootViewController as! BrowserViewController
                     rootviewController.identityChoosen = false
                     listobj?.delegate = rootviewController

@@ -40,6 +40,7 @@
 @property (strong, readonly) NSString *evOrgName;
 
 - (id)initWithSecTrustRef:(SecTrustRef)secTrustRef;
+- (id)initWithSecCertRef:(SecCertificateRef)cert;
 - (id)initWithData:(NSData *)data;
 - (BOOL)isExpired;
 - (BOOL)hasWeakSignatureAlgorithm;

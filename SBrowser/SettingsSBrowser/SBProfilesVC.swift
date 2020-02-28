@@ -25,7 +25,7 @@ class SBProfilesVC: UITableViewController {
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
         tableView.backgroundColor = UIColor(red: 229/255, green: 229/255, blue: 229/255, alpha: 1)
-        
+            tableView.register(UINib(nibName: "tblcell_sbProfiles", bundle: nil), forCellReuseIdentifier: "tblcell_sbProfiles")
     }
     
 
@@ -177,16 +177,26 @@ class SBProfilesVC: UITableViewController {
         let row = indexPath.row;
         
         if indexPath.section == 0  {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "storageCell")
-                ?? UITableViewCell(style: .value1, reuseIdentifier: "storageCell")
+            if identities.count == 0{
+                let cell = tableView.dequeueReusableCell(withIdentifier: "storageCell")
+                    ?? UITableViewCell(style: .value1, reuseIdentifier: "storageCell")
+                
+                cell.selectionStyle = .none
+                cell.textLabel?.text = "No items"
+                return cell
+                
+            }
             
-            cell.selectionStyle = .none
-            
-            
+            let cell = tableView.dequeueReusableCell(withIdentifier: "tblcell_sbProfiles") as? tblcell_sbProfiles
+                  //?? UITableViewCell(style: .value1, reuseIdentifier: "storageCell")
+            //  tableView.dequeueReusableCell(withIdentifier: "CustomCell", for: indexPath) as! CustomCell
+              cell!.selectionStyle = .none
+              
+               
        
             if identities.count == 0{
-                cell.textLabel?.text = "No items"
-                cell.accessoryType = .none
+                cell?.lbltitle?.text = "No items"
+                cell!.accessoryType = .none
             }else{
                 var identity: SecIdentity?
                 var identityCertificate: SecCertificate?
@@ -197,8 +207,28 @@ class SBProfilesVC: UITableViewController {
                 identitySubject = SecCertificateCopySubjectSummary(identityCertificate!)
            //     assert(identitySubject != nil)
 
-                cell.textLabel?.text = (identitySubject! as String)
-                cell.accessoryType = .disclosureIndicator
+                cell?.lbltitle?.text = (identitySubject! as String)
+                cell!.accessoryType = .disclosureIndicator
+                let dic = Credentials.shared()?.getCertificateTitleinfo(identityCertificate!) as! NSDictionary
+                let expiredate = dic["ExpireDate"] as? Date
+                let issuarname = dic["issuer"] as? String
+                
+                let dateFormat1 = DateFormatter()
+                dateFormat1.dateFormat = "dd MMMM yyyy"
+                let strexpiryDatey = dateFormat1.string(from: expiredate!) // string with yyyy-MM-dd format
+
+                let todayDate = Date()
+                if todayDate > expiredate!{
+                    cell?.lblexpiredate.text = "Expire since:" + "\(strexpiryDatey)"
+                    cell?.lblexpiredate.textColor = UIColor.red
+                }else{
+                    cell?.lblexpiredate.text = "Expires:" + "\(strexpiryDatey)"
+                    cell?.lblexpiredate.textColor = cell?.lblissuedby.textColor
+                }
+                
+                cell?.lblissuedby.text = "Issued by: " + issuarname!
+                
+  
             }
 
                 
@@ -216,11 +246,11 @@ class SBProfilesVC: UITableViewController {
 //                    detail.append(ByteCountFormatter.string(fromByteCount: item.storage, countStyle: .file))
 //                }
                 
-                cell.detailTextLabel?.text = ""//detail.joined(separator: ", ")
-                
+//                cell.detailTextLabel?.text = "555545454545454545554454545545545445545"//detail.joined(separator: ", ")
+//            cell.imageView?.image = #imageLiteral(resourceName: "Apple_Settings")
+//         cell.detailTextLabel?.frame = CGRect(x: (cell.textLabel?.frame.minX)!, y: (cell.textLabel?.frame.minY)!, width: (cell.detailTextLabel?.frame.width)!, height: (cell.detailTextLabel?.frame.height)!)
             
-            
-            return cell
+            return cell!
         } else if indexPath.section == 1  {
             let cell = tableView.dequeueReusableCell(withIdentifier: "storageCell")
                 ?? UITableViewCell(style: .value1, reuseIdentifier: "storageCell")
@@ -269,6 +299,15 @@ class SBProfilesVC: UITableViewController {
         
         return UITableViewCell()
         
+    }
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.section == 1{
+            return 56
+        }
+        if identities.count == 0{
+            return 56
+        }
+        return 80
     }
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if section == 0 || section == 1 {
@@ -337,7 +376,8 @@ class SBProfilesVC: UITableViewController {
                 return
             }
             let obj = SBProfilesInfoVC()
-            obj.selectedrow = indexPath.row
+           // obj.selectedrow = indexPath.row
+            obj.isViewFromSettings = true
             obj.identity = (identities[indexPath.row] as! SecIdentity)
             self.navigationController?.pushViewController(
             obj, animated: true)

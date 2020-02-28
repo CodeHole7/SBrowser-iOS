@@ -752,6 +752,35 @@ static NSInteger OrderCertificates(id left, id right, void *context)
     [self _dumpCredentials];
 }
 
+- (NSDate *)getCertificateexpireDate:(SecCertificateRef)certificate
+{
+    NSData *certificateData = (NSData *) SecCertificateCopyData(certificate);
+
+    const unsigned char *certificateDataBytes = (const unsigned char *)[certificateData bytes];
+    X509 *certificateX509 = d2i_X509(NULL, &certificateDataBytes, [certificateData length]);
+
+    NSDate *expiryDate = CertificateGetExpiryDate(certificateX509);
+
+    
+    return expiryDate;
+}
+
+
+- (NSDictionary *)getCertificateTitleinfo:(SecCertificateRef)certificate
+{
+    NSData *certificateData = (NSData *) SecCertificateCopyData(certificate);
+
+    const unsigned char *certificateDataBytes = (const unsigned char *)[certificateData bytes];
+    X509 *certificateX509 = d2i_X509(NULL, &certificateDataBytes, [certificateData length]);
+    NSString *issuer = CertificateGetIssuerName(certificateX509);
+    NSDate *expiryDate = CertificateGetExpiryDate(certificateX509);
+
+    NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:expiryDate, @"ExpireDate",
+    [NSString stringWithFormat:@"%@",issuer],@"issuer",
+        nil];
+    
+    return dic;
+}
 - (NSArray *)getCertificateinfo:(SecCertificateRef)certificate
 {
     NSData *certificateData = (NSData *) SecCertificateCopyData(certificate);
@@ -761,40 +790,88 @@ static NSInteger OrderCertificates(id left, id right, void *context)
 
     NSString *issuer = CertificateGetIssuerName(certificateX509);
     NSString *subjecter = CertificateGetSubjectName(certificateX509);
-    
+  //  int sid = getSignaturid(certificateX509);
     NSDate *expiryDate = CertificateGetExpiryDate(certificateX509);
     NSDate *releaseDate = CertificateGetReleaseDate(certificateX509);
     NSString *serialnumber = getSerialnumber(certificateX509);
     const char *areaname = getAreaname();
-    NSInteger version = CertificateGetversion(certificateX509);
+    long version = CertificateGetversion(certificateX509);
+    
     NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"info", @"Section",
 
                            nil];
 
     
     
-    dic = [NSDictionary dictionaryWithObjectsAndKeys:@"Organization", @"title",
+    dic = [NSDictionary dictionaryWithObjectsAndKeys:@"Organization (O)", @"title",
     [NSString stringWithFormat:@"%@",subjecter],@"item",
         nil];
     
-    NSArray *issubjectArr = @[dic];
+    NSMutableArray *issubjectArr = [[NSMutableArray alloc] init];
+    [issubjectArr addObject:dic];
+    
+    dic = [NSDictionary dictionaryWithObjectsAndKeys:@"Locality (L)", @"title",
+    [NSString stringWithFormat:@"%@",@""],@"item",
+        nil];
+    [issubjectArr addObject:dic];
+    
+    dic = [NSDictionary dictionaryWithObjectsAndKeys:@"State/Province (ST)", @"title",
+    [NSString stringWithFormat:@"%@",@""],@"item",
+        nil];
+    [issubjectArr addObject:dic];
+    
+    dic = [NSDictionary dictionaryWithObjectsAndKeys:@"Country (C)", @"title",
+    [NSString stringWithFormat:@"%@",@""],@"item",
+        nil];
+    [issubjectArr addObject:dic];
     
     
     
-    dic = [NSDictionary dictionaryWithObjectsAndKeys:@"Organization", @"title",
+    dic = [NSDictionary dictionaryWithObjectsAndKeys:@"Common Name(CN)", @"title",
+    [NSString stringWithFormat:@"%@",@""],@"item",
+        nil];
+    
+    //NSArray *issuarArr = @[dic];
+    NSMutableArray *issuarArr = [[NSMutableArray alloc] init];
+    [issuarArr addObject:dic];
+    
+    
+    dic = [NSDictionary dictionaryWithObjectsAndKeys:@"Organization (O)", @"title",
     [NSString stringWithFormat:@"%@",issuer],@"item",
         nil];
     
-    NSArray *issuarArr = @[dic];
+    [issuarArr addObject:dic];
+    
+    dic = [NSDictionary dictionaryWithObjectsAndKeys:@"Country (C)", @"title",
+    [NSString stringWithFormat:@"%@",@""],@"item",
+        nil];
+    [issuarArr addObject:dic];
     
     
+    
+    NSMutableArray *isSerialnumberArr = [[NSMutableArray alloc] init];
+    
+    dic = [NSDictionary dictionaryWithObjectsAndKeys:@"Version", @"title",
+           [NSString stringWithFormat:@"%ld",version],@"item",
+        nil];
+
+    [isSerialnumberArr addObject:dic];
     
     
     dic = [NSDictionary dictionaryWithObjectsAndKeys:@"Serial Number", @"title",
     [NSString stringWithFormat:@"%@",serialnumber],@"item",
         nil];
+
+    [isSerialnumberArr addObject:dic];
     
-    NSArray *isSerialnumberArr = @[dic];
+    
+    dic = [NSDictionary dictionaryWithObjectsAndKeys:@"Signature Algorithm", @"title",
+    [NSString stringWithFormat:@"%@",@""],@"item",
+        nil];
+
+    [isSerialnumberArr addObject:dic];
+    
+    
     
     NSDateFormatter *dateFormat1 = [[NSDateFormatter alloc] init];
       [dateFormat1 setDateFormat:@"MM/dd/yyyy, HH:mm:ss"];
@@ -803,11 +880,11 @@ static NSInteger OrderCertificates(id left, id right, void *context)
     NSString *strexpiryDatey = [dateFormat1  stringFromDate:expiryDate];// string with yyyy-MM-dd format
     
     
-    dic = [NSDictionary dictionaryWithObjectsAndKeys:@"Not Valid Before", @"title",
+    dic = [NSDictionary dictionaryWithObjectsAndKeys:@"Begins On", @"title",
     [NSString stringWithFormat:@"%@",strToday],@"item",
         nil];
 
-    NSDictionary *dic2 = [NSDictionary dictionaryWithObjectsAndKeys:@"Not Valid After", @"title",
+    NSDictionary *dic2 = [NSDictionary dictionaryWithObjectsAndKeys:@"Expires After", @"title",
     [NSString stringWithFormat:@"%@",strexpiryDatey],@"item",
         nil];
     
@@ -820,7 +897,7 @@ static NSInteger OrderCertificates(id left, id right, void *context)
     
     
     
-    NSArray *mainarr = @[issuarArr, issubjectArr, isSerialnumberArr, validityArr];
+    NSArray *mainarr = @[issubjectArr, validityArr, issuarArr, isSerialnumberArr];
     return mainarr;
 
 }
@@ -829,7 +906,7 @@ static NSString * CertificateGetIssuerName(X509 *certificateX509)
     NSString *issuer = nil;
     if (certificateX509 != NULL) {
         X509_NAME *issuerX509Name = X509_get_issuer_name(certificateX509);
-
+//X509_NAME_oneline(<#X509_NAME *a#>, <#char *buf#>, <#int size#>)
         if (issuerX509Name != NULL) {
             int nid = OBJ_txt2nid("O"); // organization
             int index = X509_NAME_get_index_by_NID(issuerX509Name, nid, -1);
@@ -854,7 +931,7 @@ static NSString * CertificateGetSubjectName(X509 *certificateX509)
     NSString *issuer = nil;
     if (certificateX509 != NULL) {
         X509_NAME *issuerX509Name = X509_get_subject_name(certificateX509);
-
+        
         if (issuerX509Name != NULL) {
             int nid = OBJ_txt2nid("O"); // organization
             int index = X509_NAME_get_index_by_NID(issuerX509Name, nid, -1);
@@ -998,6 +1075,34 @@ static const char * getAreaname()
 }
 
 
+static int * getSignaturid(X509 *certificateX509)
+{
+   // NSString *issuer = nil;
+   
+        const char *areaName = X509_get_default_cert_area();
+       int sid = X509_get_signature_nid(certificateX509);
+     
+//            int nid = OBJ_txt2nid("O"); // organization
+//            int index = X509_NAME_get_index_by_NID(issuerX509Name, nid, -1);
+//
+//            X509_NAME_ENTRY *issuerNameEntry = X509_NAME_get_entry(issuerX509Name, index);
+//
+//            if (issuerNameEntry) {
+//                ASN1_STRING *issuerNameASN1 = X509_NAME_ENTRY_get_data(issuerNameEntry);
+//
+//                if (issuerNameASN1 != NULL) {
+//                    unsigned char *issuerName = ASN1_STRING_data(issuerNameASN1);
+//                    issuer = [NSString stringWithUTF8String:(char *)issuerName];
+//                }
+//            }
+        
+    
+
+    return areaName;
+}
+
+
+
 static NSString * getSerialnumber(X509 *certificateX509)
 {
    ASN1_INTEGER *serial = X509_get_serialNumber(certificateX509);
@@ -1014,7 +1119,7 @@ static NSString * getSerialnumber(X509 *certificateX509)
        [serialNumber appendString:[NSString stringWithFormat:@"%@ ", temp]];
    }
         
-    
+
 
     return serialNumber;
 }
@@ -1025,65 +1130,29 @@ static NSString * getSerialnumber(X509 *certificateX509)
 
 
 
-static NSString * CertificateGetversion(X509 *certificateX509)
+static long  CertificateGetversion(X509 *certificateX509)
 {
-    NSString *issuer = nil;
-    if (certificateX509 != NULL) {
-        NSInteger version = X509_get_version(certificateX509);
-        X509_PUBKEY *pkey = X509_get_X509_PUBKEY(certificateX509);
-        NSInteger signaturetype = X509_get_signature_type(certificateX509);
+
+
+        long version = X509_get_version(certificateX509);
+//        X509_PUBKEY *pkey = X509_get_X509_PUBKEY(certificateX509);
+//        NSInteger signaturetype = X509_get_signature_type(certificateX509);
   //      ASN1_INTEGER *serialNumber = X509_get_serialNumber(certificateX509);
-    
+
+        printf("    Version: %lu\n", version);
+//        if (options->xmlOutput != 0)
+//            fprintf(options->xmlOutput, "   <version>%lu</version>\n", version);
+        
+//           EVP_PKEY *publickey = X509_get_pubkey(certificateX509);
+        
+
         
         
+        return version;
         
-        
-        
-        
-           EVP_PKEY *publickey = X509_get_pubkey(certificateX509);
-        
-        
-        
-   
-        
-         
-     
+
 
    
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        return issuer;
-        
-        
-        
-        
-        
-        
-        
-//            int nid = OBJ_txt2nid("O"); // organization
-//            int index = X509_NAME_get_index_by_NID(issuerX509Name, nid, -1);
-//
-//            X509_NAME_ENTRY *issuerNameEntry = X509_NAME_get_entry(issuerX509Name, index);
-//
-//            if (issuerNameEntry) {
-//                ASN1_STRING *issuerNameASN1 = X509_NAME_ENTRY_get_data(issuerNameEntry);
-//
-//                if (issuerNameASN1 != NULL) {
-//                    unsigned char *issuerName = ASN1_STRING_data(issuerNameASN1);
-//                    issuer = [NSString stringWithUTF8String:(char *)issuerName];
-//                }
-//            }
-        
-    }
-
-    return issuer;
 }
 
 @end

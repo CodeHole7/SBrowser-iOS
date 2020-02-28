@@ -61,45 +61,45 @@
 
 @implementation ClientIdentityController
 
-+ (NSArray *)_identities
-    // Returns an array of SecIdentityRef that represents the available client-side 
-    // identities in the keychain.
-    //
-    // We go /back/ to the keychain to get the list of identities rather than 
-    // using the Credentials module.  This decouples this class from the program 
-    // as a whole, making it easier for folks to reuse it.  OTOH, if the client 
-    // wants to use an alternative identity source, it can implement the 
-    // -identityViewIdentitiesToDisplay: delegate callback.
-{
-    OSStatus        err;
-    NSArray *       result;
-    CFArrayRef      identities;
+//+ (NSArray *)_identities
+//    // Returns an array of SecIdentityRef that represents the available client-side
+//    // identities in the keychain.
+//    //
+//    // We go /back/ to the keychain to get the list of identities rather than
+//    // using the Credentials module.  This decouples this class from the program
+//    // as a whole, making it easier for folks to reuse it.  OTOH, if the client
+//    // wants to use an alternative identity source, it can implement the
+//    // -identityViewIdentitiesToDisplay: delegate callback.
+//{
+//    OSStatus        err;
+//    NSArray *       result;
+//    CFArrayRef      identities;
+//
+//    identities = NULL;
+//
+//    err = SecItemCopyMatching(
+//        (CFDictionaryRef) [NSDictionary dictionaryWithObjectsAndKeys:
+//            (id) kSecClassIdentity,     kSecClass,
+//            kSecMatchLimitAll,          kSecMatchLimit,
+//            kCFBooleanTrue,             kSecReturnRef,
+//            nil
+//        ],
+//        (CFTypeRef *) &identities
+//    );
+//    if (err == noErr) {
+//        result = [NSArray arrayWithArray:(id) identities];
+//    } else {
+//        result = [NSArray array];
+//    }
+//
+//    if (identities != NULL) {
+//        CFRelease(identities);
+//    }
+//
+//    return result;
+//}
 
-    identities = NULL;
-    
-    err = SecItemCopyMatching(
-        (CFDictionaryRef) [NSDictionary dictionaryWithObjectsAndKeys:
-            (id) kSecClassIdentity,     kSecClass, 
-            kSecMatchLimitAll,          kSecMatchLimit, 
-            kCFBooleanTrue,             kSecReturnRef, 
-            nil
-        ],
-        (CFTypeRef *) &identities
-    );
-    if (err == noErr) {
-        result = [NSArray arrayWithArray:(id) identities];
-    } else {
-        result = [NSArray array];
-    }
-    
-    if (identities != NULL) {
-        CFRelease(identities);
-    }
-    
-    return result;
-}
-
-- (id)initWithChallenge:(NSURLAuthenticationChallenge *)challenge
+- (id)initWithChallenge:(NSURLAuthenticationChallenge *)challenge identity:(NSArray*)identity;
 {
     assert(challenge != nil);
     
@@ -107,6 +107,8 @@
     if (self != nil) {
         self->_challenge = [challenge retain];
     }
+    //_identities = identity;
+    self->_identities = [identity retain];
     return self;
 }
 

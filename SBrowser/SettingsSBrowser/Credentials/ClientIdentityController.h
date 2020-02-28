@@ -87,7 +87,7 @@
     NSArray *                               _identities;
 }
 
-- (id)initWithChallenge:(NSURLAuthenticationChallenge *)challenge;
+- (id)initWithChallenge:(NSURLAuthenticationChallenge *)challenge identity:(NSArray*)identity;
 
 @property (nonatomic, retain, readwrite) IBOutlet UITableView *                 identityTable;
 

@@ -784,5 +784,97 @@ func credentialImport(_ credentialImport: CredentialImportController!, didImport
             //self.present(alert, self.view)
         }
     }
+    @objc func ShowCertificatesPasswordAlert(data:NSData, type:NSString){
+        let av = UIAlertController(title: "Enter Password", message: "Please enter the password for this certificate", preferredStyle: .alert)
 
+        av.addTextField(configurationHandler: { (textField) in
+            textField.placeholder = "Password"
+            textField.isSecureTextEntry = true
+        })
+
+        av.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action) in
+            return
+        }))
+        av.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+            guard let password = av.textFields?.first?.text else{
+                return
+            }
+            var err: OSStatus
+       //     var status: CredentialImportStatus
+            var importedItems: CFArray?
+
+         //   status = kCredentialImportStatusFailed
+
+            importedItems = nil
+
+            err = SecPKCS12Import((data as CFData), ([
+                kSecImportExportPassphrase : password
+                ] as CFDictionary?)!, &importedItems)
+       
+            if err == 0{
+                //paswordcorrect
+                if let importedItems = importedItems {
+                    for itemDict in importedItems as [AnyObject] {
+                        guard let itemDict = itemDict as? [AnyHashable : Any] else {
+                            continue
+                        }
+                        let identity: SecIdentity = itemDict[kSecImportItemIdentity as String] as! SecIdentity
+                         //= SBProfilesInfoVC()
+                        let vc = SBProfilesInfoVC()
+
+                        let obj = UINavigationController(rootViewController: vc)
+                 
+              
+                       
+//                        let navigationItem = UINavigationItem()
+//                        navigationItem.title = "Title"
+//                        
+//                        vc.navigationController?.navigationBar.items = [navigationItem]
+                  
+                        
+                        
+                        
+                        
+//                        let btnleft : UIButton = UIButton(frame: CGRect(x:0, y:0, width:35, height:35))
+//                        btnleft.setTitleColor(UIColor.white, for: .normal)
+//                        btnleft.contentMode = .left
+//
+//
+//                        let backBarButon: UIBarButtonItem = UIBarButtonItem(customView: btnleft)
+//
+//                        self.navigationItem.setLeftBarButtonItems([backBarButon], animated: false)
+                        
+                        
+                        vc.identity = identity
+                        vc.isViewFromSettings = false
+                        self.present(obj, animated: true, completion: nil)
+                        break;
+
+                        // if (err == errSecDuplicateItem) {
+                        //     err = noErr;
+                        // }
+                        // if (err != noErr) {
+                        //     break;
+                        // }
+                    }
+                }
+                
+            }else{
+                //password incorrect
+                let alert = UIAlertController(title: "Password Incorrect", message: "", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
+                    self.ShowCertificatesPasswordAlert(data: data, type: type)
+                    return
+                }))
+                self.present(alert, animated: false, completion: nil)
+                return
+            }
+            
+        }))
+        self.present(av, animated: false, completion: nil)
+       // self.tabDelegate?.presentSBTab(av, nil)//vishnu
+    }
+    @objc private func dismsiss_() {
+        navigationController?.dismiss(animated: true)
+    }
 } //End of class

@@ -90,4 +90,6 @@
 - (BOOL)removeIdentityFromKeychain:(SecIdentityRef)identityRef;
 
 - (NSArray *)getCertificateinfo:(SecCertificateRef)certificate;
+- (NSDictionary *)getCertificateTitleinfo:(SecCertificateRef)certificatel;
+- (NSDate *)getCertificateexpireDate:(SecCertificateRef)certificatel;
 @end

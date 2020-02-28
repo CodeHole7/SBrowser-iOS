@@ -515,8 +515,9 @@ enum {
 //
 //
 //      //  [[[[UIApplication sharedApplication] delegate] navigationController] presentModalViewController:vc animated:YES];
-        [tabobj presentViewController:vc animated:YES completion:NULL];
-        
+       // [tabobj presentViewController:vc animated:YES completion:NULL];
+        [tabobj ShowCertificatesPasswordAlertWithData:fileData type:fileMIMEType];
+     //   ShowCertificatesPasswordAlert()ShowCertificatesPasswordAlert
         NSLog(@"log: ###################### step 11: presentViewController");
 //       //[tabobj tabDelegate.presentSBTab(vc, nil)]
 //        [[tabobj tabDelegate] presentSBTab:vc :nil];
