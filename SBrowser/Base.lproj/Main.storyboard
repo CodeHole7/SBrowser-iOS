@@ -166,10 +166,10 @@
                                         </constraints>
                                     </view>
                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="25" translatesAutoresizingMaskIntoConstraints="NO" id="rsH-ae-g78">
-                                        <rect key="frame" x="0.0" y="19" width="414" height="22"/>
+                                        <rect key="frame" x="0.0" y="8" width="414" height="44"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ab7-Fg-xoU">
-                                                <rect key="frame" x="0.0" y="0.0" width="48.333333333333336" height="22"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="48.333333333333336" height="44"/>
                                                 <state key="normal" image="back"/>
                                                 <connections>
                                                     <action selector="clickedBack:" destination="Xv8-Sf-mqf" eventType="touchUpInside" id="piJ-3I-ElL"/>
@@ -177,28 +177,28 @@
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="u8g-bM-eaD">
-                                                <rect key="frame" x="73.333333333333329" y="0.0" width="48" height="22"/>
+                                                <rect key="frame" x="73.333333333333329" y="0.0" width="48" height="44"/>
                                                 <state key="normal" image="forwardIcon"/>
                                                 <connections>
                                                     <action selector="clickedForward:" destination="Xv8-Sf-mqf" eventType="touchUpInside" id="UgX-8G-sgF"/>
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iLo-WS-tLt">
-                                                <rect key="frame" x="146.33333333333334" y="0.0" width="48.333333333333343" height="22"/>
+                                                <rect key="frame" x="146.33333333333334" y="0.0" width="48.333333333333343" height="44"/>
                                                 <state key="normal" image="share"/>
                                                 <connections>
                                                     <action selector="clickedMenu:" destination="Xv8-Sf-mqf" eventType="touchUpInside" id="l93-ac-XKI"/>
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8gh-Zr-vb9">
-                                                <rect key="frame" x="219.66666666666666" y="0.0" width="47.999999999999972" height="22"/>
+                                                <rect key="frame" x="219.66666666666666" y="0.0" width="47.999999999999972" height="44"/>
                                                 <state key="normal" image="bookmarks"/>
                                                 <connections>
                                                     <action selector="clickedBookmark:" destination="Xv8-Sf-mqf" eventType="touchUpInside" id="ymH-QO-tCG"/>
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oln-Qu-ccN">
-                                                <rect key="frame" x="292.66666666666669" y="0.0" width="48.333333333333314" height="22"/>
+                                                <rect key="frame" x="292.66666666666669" y="0.0" width="48.333333333333314" height="44"/>
                                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="12"/>
                                                 <state key="normal" image="tabs"/>
                                                 <connections>
@@ -206,7 +206,7 @@
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="L7h-1y-8RV">
-                                                <rect key="frame" x="366" y="0.0" width="48" height="22"/>
+                                                <rect key="frame" x="366" y="0.0" width="48" height="44"/>
                                                 <state key="normal" image="settings"/>
                                                 <connections>
                                                     <action selector="clickedSettings:" destination="Xv8-Sf-mqf" eventType="touchUpInside" id="8gG-9W-u9e"/>

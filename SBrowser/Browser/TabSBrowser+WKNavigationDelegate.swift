@@ -100,9 +100,18 @@ extension TabSBrowser: WKNavigationDelegate, WKUIDelegate {
 //    }
     func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
         
+         print(" delegate 2: ################################ decidePolicyFor navigationResponse: WKNavigationResponse")
+        
+        
         //ps//
         let supportedMIMETypesSSupportedCredentialTypes = ["application/x-pkcs12", "application/x-x509-ca-cert", "application/pkix-cert"]
-        
+        if navigationResponse.response.url!.pathExtension == "sbc"{
+            var byte = navigationResponse.response
+            print("sbc")
+            decisionHandler(.cancel)
+            return
+        }
+       // else
         if let mimeType = navigationResponse.response.mimeType {
             // do some thing with the MIME type
             var fileMIMEType = "" //yeh
@@ -205,16 +214,139 @@ extension TabSBrowser: WKNavigationDelegate, WKUIDelegate {
             return
         }
         */
+        print(" delegate 1: ################################ decidePolicyFor navigationAction: WKNavigationAction")
         
-        
-        guard let url = navigationAction.request.url else {
+        guard var url = navigationAction.request.url else {
             return decisionHandler(WKNavigationActionPolicy.cancel, preferences)
         }
         
         if url.scheme?.lowercased() == "endlessipc" {
             return handleIpc(url, navigationAction.navigationType) ? decisionHandler(WKNavigationActionPolicy.allow, preferences) : decisionHandler(WKNavigationActionPolicy.cancel, preferences)
         }
-        
+        if url.pathExtension == "sbc"{
+            
+            let pathurl = pathForTemporaryFile(withPrefix: "localPath")
+            
+            let downloadurl = URL(fileURLWithPath: "\(pathurl ?? "").\(url.pathExtension)")
+            if FileManager.default.fileExists(atPath: downloadurl.path){
+                do{
+                    try FileManager.default.removeItem(at: downloadurl)
+                }catch{
+                    
+                }
+            }
+            DispatchQueue.main.async {
+                rootviewController.ShowBlackLayer()
+            }
+            Downloader.load(url: url, to: downloadurl, completion: {
+                
+                let data = NSData(contentsOf: downloadurl)
+                let count = data!.length / MemoryLayout<UInt8>.size
+                
+                // create an array of Uint8
+                var byteArray = [UInt8](repeating: 0, count: count)
+                
+                // copy bytes into array
+                data!.getBytes(&byteArray, length:count)
+                
+                var passwordarr = [UInt8]()
+                for i in byteArray.count-33..<byteArray.count{
+                    passwordarr.append(byteArray[i])
+                }
+                
+                let value = Data(bytes: &byteArray, count: byteArray.count-32)
+                
+                let pfxPath  = "\(pathurl ?? "").pfx"
+                do{
+                    try value.write(to: URL(fileURLWithPath: pfxPath))
+                }catch{
+                    
+                }
+                
+                let key = "PHGu98&6iw/ryfhj^^hgy=uiygTYR%00"
+                let iv = "cF3$Z1-U89a;]m45K"
+                
+                let sv = UnsafeRawBufferPointer(start: passwordarr, count: passwordarr.count)
+                let keyv = UnsafeRawBufferPointer(start: key, count: key.count)
+                let ivv = UnsafeRawBufferPointer(start: iv, count: iv.count)
+                
+                
+                guard let vl = decrypt(sv, key: keyv, iv: ivv)else {
+                    return
+                }
+                let passwordDecrypted = vl.map { UInt8($0) }
+                
+                if let pstring = String(bytes: passwordDecrypted, encoding: .utf8) {
+                    print(pstring)
+
+                    let password = pstring
+                    var err: OSStatus
+                    var importedItems: CFArray?
+                    importedItems = nil
+                    let importeddata = NSData(contentsOf: URL(fileURLWithPath: pfxPath))
+                    
+                    err = SecPKCS12Import((importeddata as! CFData), ([
+                        kSecImportExportPassphrase : password
+                        ] as CFDictionary?)!, &importedItems)
+                    
+                    if err == 0{
+                        //paswordcorrect
+                        if let importedItems = importedItems {
+                            for itemDict in importedItems as [AnyObject] {
+                                guard let itemDict = itemDict as? [AnyHashable : Any] else {
+                                    continue
+                                }
+                                let identity: SecIdentity = itemDict[kSecImportItemIdentity as String] as! SecIdentity
+                                //= SBProfilesInfoVC()
+                                
+                                DispatchQueue.main.async {
+                                    let vc = SBProfilesInfoVC()
+                                    
+                                    let obj = UINavigationController(rootViewController: vc)
+                                    shouldRedirectAfterCertImport = true
+                                    vc.identity = identity
+                                  //  var redirecturl  = url.deletingLastPathComponent().appendingPathComponent("redirect")
+                                    //rootviewController.searchBar.text = redirecturl.path
+                                    redirecturl = url.deletingLastPathComponent().appendingPathComponent("redirect")
+                                    vc.isViewFromSettings = false
+                                    rootviewController.HideBlackLayer()
+                                    rootviewController.present(obj, animated: true, completion: nil)
+                                }
+
+                                
+                                break;
+                                
+                                
+                            }
+                        }
+                        
+                    }else{
+                        DispatchQueue.main.async {
+                            rootviewController.HideBlackLayer()
+                        }
+                        //password incorrect
+                        //                                    let alert = UIAlertController(title: "Password Incorrect", message: "", preferredStyle: .alert)
+                        //                                    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
+                        //                                        self.ShowCertificatesPasswordAlert(data: data, type: type)
+                        //                                        return
+                        //                                    }))
+                        //                                    self.present(alert, animated: false, completion: nil)
+                        //
+                       // return
+                    }
+
+                    
+                } else {
+                    print("not a valid UTF-8 sequence")
+                    DispatchQueue.main.async {
+                        rootviewController.HideBlackLayer()
+                    }
+                }
+                
+                
+            })
+            return decisionHandler(WKNavigationActionPolicy.allow, preferences)
+        }
         
         
         // Try to prevent universal links from triggering by refusing the initial request and starting a new one.
@@ -224,6 +356,7 @@ extension TabSBrowser: WKNavigationDelegate, WKUIDelegate {
             reset(navigationAction.request.mainDocumentURL)
         }
 
+        
         if HostSettingsSBrowser.for(url.host).universalLinkProtection {
             if iframe && navigationAction.navigationType != .linkActivated //.linkClicked//vishnu
             {
@@ -284,7 +417,8 @@ extension TabSBrowser: WKNavigationDelegate, WKUIDelegate {
         
         var successfulAuth = false
         
-        /*if let url = webView.url, challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
+        print(" delegate 3: ################################ didReceive challenge: URLAuthenticationChallenge")
+        /*if let url = webView.url, challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTwisetechlabs.comrust {
             if let trust = challenge.protectionSpace.serverTrust {
                 if HostSettingsSBrowser.for(webView.url?.host).ignoreTlsErrors {
                     successfulAuth = true

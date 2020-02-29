@@ -65,6 +65,12 @@ class SBProfilesInfoVC: UITableViewController {
             let alert = UIAlertController(title: "Successfully Imported", message: "", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
                 self.navigationController?.dismiss(animated: true)
+                if shouldRedirectAfterCertImport == true{
+                    shouldRedirectAfterCertImport = false
+                    //redirect code here
+                    rootviewController.searchBar.text = redirecturl!.absoluteString
+                    rootviewController.searchBarSearchButtonClicked(rootviewController.searchBar)
+                }
                 return
             }))
             self.present(alert, animated: false, completion: nil)
