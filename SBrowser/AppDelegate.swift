@@ -198,6 +198,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, JAHPAuthenticatingHTTPPro
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
 
+        //let storyboard = UIStoryboard(name: "Main-iPad", bundle: nil)
+        let viewController = currentStoryboard.instantiateViewController(withIdentifier: "BrowserViewController") as! BrowserViewController
+        
+        //show(viewController)
+        
+        if #available(iOS 13.0, *) {
+            //Do nothing here
+        } else {
+//            window = UIWindow(frame: UIScreen.main.bounds)
+//            window?.makeKeyAndVisible()
+            show(viewController)
+        }
+        
+        
+        
         if let shortcut = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem {
             handle(shortcut)
         }

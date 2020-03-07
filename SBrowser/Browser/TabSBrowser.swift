@@ -224,13 +224,35 @@ class TabSBrowser: UIView {
         load(request)
     }
 
-    func load(_ request: URLRequest?) {
+    func load(_ request: URLRequest?) {//
         DispatchQueue.main.async {
             self.webView.stopLoading()
         }
-
-        reset()
-
+//        if let url = request?.url {
+//            if let oldurl = webView.url {
+//                if url == oldurl{
+//                    applicableHttpsEverywhereRules.removeAllObjects()
+//                    applicableUrlBlockerTargets.removeAllObjects()
+////                    sslCertificate = nil
+//                    self.url = url ?? URL.start
+//                }else{
+//                    reset()
+//                }
+//            }else{
+//                reset()
+//            }
+//
+//        }else{
+//            reset()
+//        }
+    
+        if let url = request?.url {
+            reset(url)
+            
+        }else{
+            reset()
+        }
+//reset()  //ps
         let request = request ?? URLRequest(url: URL.start)
 
         if let url = request.url {
@@ -242,7 +264,7 @@ class TabSBrowser: UIView {
 
             self.url = url
         }
-
+        
         DispatchQueue.main.async {
             self.webView.load(request)
         }
@@ -256,7 +278,28 @@ class TabSBrowser: UIView {
     func reset(_ url: URL? = nil) {
         applicableHttpsEverywhereRules.removeAllObjects()
         applicableUrlBlockerTargets.removeAllObjects()
-        sslCertificate = nil
+        //sslCertificate = nil//ps
+        
+//ps
+        if let url = url {
+            if let oldurl = webView.url {
+                if url == oldurl{
+                    
+                }else{
+                    sslCertificate = nil
+                }
+            }else{
+                sslCertificate = nil
+            }
+            
+        }else{
+            sslCertificate = nil
+        }
+        
+    //
+        
+        
+        
         self.url = url ?? URL.start
     }
 
@@ -264,6 +307,7 @@ class TabSBrowser: UIView {
     func goBack() {
         if webView.canGoBack {
             skipHistory = true
+            sslCertificate = nil//ps
             webView.goBack()
         } else if let parentId = parentId {
             tabDelegate?.removeTabSBrowser(self, focus: tabDelegate?.getTabSBrowser(hash: parentId))
@@ -274,6 +318,7 @@ class TabSBrowser: UIView {
     func goForward() {
         if webView.canGoForward {
             skipHistory = true
+            sslCertificate = nil//ps
             webView.goForward()
         }
     }

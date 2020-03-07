@@ -34,6 +34,7 @@ public class PKCS12 {
             fatalError("SecPKCS12Import returned an error trying to import PKCS12 data")
         }
         
+        
         guard let theItemsCFArray = items else { fatalError()  }
         let theItemsNSArray:NSArray = theItemsCFArray as NSArray
         guard let dictArray = theItemsNSArray as? [[String:AnyObject]] else { fatalError() }

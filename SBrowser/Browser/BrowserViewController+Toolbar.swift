@@ -52,10 +52,83 @@ extension BrowserViewController: UIScrollViewDelegate, UIGestureRecognizerDelega
 
 
     // MARK: Public Methods
+    
+    
+    func setSearchBarSize(_ show: Bool = true, _ animated: Bool = true) {
+        
+        if viewHeader == nil || show != viewHeader!.isHidden {
+            return
+        }
+        
+        if searchBar.text?.trimmingCharacters(in: .whitespaces) == "" {
+            lblTitleHeader.isHidden = true
+            lblTitleHeader.text = ""
+            viewHeader?.isHidden = false
+            viewHeaderHeightConstraint?.constant = searchBarHeight ?? 30
+            
+            btnTabs.setTitleColor(btnTabs.tintColor, for: .normal)
+            
+            if animated {
+                UIView.animate(withDuration: 0.25) {
+                    self.view.layoutIfNeeded()
+                }
+            }
+            return
+        }
+        
+        if show {
+            lblTitleHeader.isHidden = true
+            lblTitleHeader.text = ""
+            viewHeader?.isHidden = false
+            viewHeaderHeightConstraint?.constant = searchBarHeight ?? 30
+            
+            btnTabs.setTitleColor(btnTabs.tintColor, for: .normal)
+            
+            if animated {
+                UIView.animate(withDuration: 0.25) {
+                    self.view.layoutIfNeeded()
+                }
+            }
+        } else {
+            
+            lblTitleHeader.isHidden = false
+            lblTitleHeader.text = searchBar.text
+            
+            viewHeaderHeightConstraint?.constant = 30
+            
+            if animated {
+                // Workaround: If we don't do this, the tab count number stays roughly
+                // at the same place until the end of the animation, when it is
+                // removed suddenly.
+                btnTabs.setTitleColor(.clear, for: .normal)
+                
+                UIView.animate(withDuration: 0.25,
+                               animations: { self.view.layoutIfNeeded() })
+                { _ in
+                    // Need to delay this a little, otherwise animation isn't seen,
+                    // because isHidden becomes in effect before the animation,
+                    // regardless, if we only do this in the completed callback.
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        self.viewHeader?.isHidden = true
+                    }
+                }
+            } else {
+                viewHeader?.isHidden = true
+            }
+        }
+    
+    }
 
     func showToolbar(_ show: Bool = true, _ animated: Bool = true) {
+        
+        setSearchBarSize(show, animated)
+        
         if viewFooter == nil || show != viewFooter!.isHidden {
             return
+        }
+        
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            return//Only in ipad
         }
 
         if show {

@@ -115,99 +115,196 @@ class SBProfilesInfoVC: UITableViewController {
     func Getinfo(){
 
         var identityCertificate: SecCertificate?
-        var identitySubject: CFString?
+        //var identitySubject: CFString?
         
      
         _ = SecIdentityCopyCertificate(identity!, &identityCertificate)
 
         
-        identitySubject = SecCertificateCopySubjectSummary(identityCertificate!)
+        //identitySubject = SecCertificateCopySubjectSummary(identityCertificate!)
         //     assert(identitySubject != nil)
         let certdata = SecCertificateCopyData(identityCertificate!)//sara data h isme
         //   SecCertificateCopyKey(identityCertificate!)
-        let publickey = SecCertificateCopyPublicKey(identityCertificate!)
-        var serialnumber = SecCertificateCopySerialNumberData(identityCertificate!, nil)
-        // var email = SecCertificateCopyEmailAddresses(identityCertificate!, nil)
-        SecCertificateCopyNormalizedIssuerSequence(identityCertificate!)
-        SecCertificateCopyNormalizedSubjectSequence(identityCertificate!)
-     //   SecCertificateCopyPublicKey(identityCertificate!)
-        
-
-        
-        //SecKeyAlgorithm.init(rawValue: <#T##CFString#>)
-        
-        let certificateData = SecCertificateCopyData(identityCertificate!) as NSData
-
-        var certificateDataBytes = certificateData.bytes.assumingMemoryBound(to: UInt8.self)
-        var emails = [String]()
-        var certEmails : CFArray? = nil;
-           if SecCertificateCopyEmailAddresses(identityCertificate!, &certEmails) == 0 {
-               emails.append(contentsOf: certEmails as! [String]);
-           }
-        let arr = Credentials.shared()?.getCertificateinfo(identityCertificate!) as! NSArray
-         allinfoArr =  NSMutableArray(array: arr)
-        if var arr = allinfoArr[0] as? NSMutableArray{
-            let dic:NSDictionary = [
-            "title" : "Common Name (CN)",
-            "item" : "\(identitySubject!)"
-            ]
-
-          var newarrray = [dic]
-            for i in arr{
-                newarrray.append(i as! NSDictionary)
-            }
-            
-            
-            allinfoArr[0] = newarrray
-        }
+//        let publickey = SecCertificateCopyPublicKey(identityCertificate!)
+//        var serialnumber = SecCertificateCopySerialNumberData(identityCertificate!, nil)
+//        // var email = SecCertificateCopyEmailAddresses(identityCertificate!, nil)
+//        SecCertificateCopyNormalizedIssuerSequence(identityCertificate!)
+//        SecCertificateCopyNormalizedSubjectSequence(identityCertificate!)
+//     //   SecCertificateCopyPublicKey(identityCertificate!)
+//
+//
+//
+//        //SecKeyAlgorithm.init(rawValue: <#T##CFString#>)
+//
+//        let certificateData = SecCertificateCopyData(identityCertificate!) as NSData
+//
+//        var certificateDataBytes = certificateData.bytes.assumingMemoryBound(to: UInt8.self)
+//        var emails = [String]()
+//        var certEmails : CFArray? = nil;
+//           if SecCertificateCopyEmailAddresses(identityCertificate!, &certEmails) == 0 {
+//               emails.append(contentsOf: certEmails as! [String]);
+//           }
+//        let arr = Credentials.shared()?.getCertificateinfo(identityCertificate!) as! NSArray
+//         allinfoArr =  NSMutableArray(array: arr)
+//        if var arr = allinfoArr[0] as? NSMutableArray{
+//            let dic:NSDictionary = [
+//            "title" : "Common Name (CN)",
+//            "item" : "\(identitySubject!)"
+//            ]
+//
+//          var newarrray = [dic]
+//            for i in arr{
+//                newarrray.append(i as! NSDictionary)
+//            }
+//
+//
+//            allinfoArr[0] = newarrray
+//        }
    //     allinfoArr = Credentials.shared()?.getCertificateinfo(identityCertificate!) as! NSArray
         
 //        if let certificate = SSLCertificate(data: certdata as Data){
 //            print(certificate)
 //
 //        }
+        allinfoArr.removeAllObjects()
         if let certinfo = SSLCertificate(data: certdata as Data){
-            allinfoArr.removeAllObjects()
             
-            var issuarinfo = certinfo.issuer
-            var signaturealgo = certinfo.signatureAlgorithm
-            var version = certinfo.version
-            var organizationname = certinfo.evOrgName//var
-            var serialnumber = certinfo.serialNumber
+            
+            let issuarinfo = certinfo.issuer
+            let signaturealgo = certinfo.signatureAlgorithm
+            let version = certinfo.version
+            //_ = certinfo.evOrgName//var
+            let serialnumber = certinfo.serialNumber
             var issuedto = certinfo.subject
-            var expiredate = certinfo.validityNotAfter
-            var releasedate = certinfo.validityNotBefore
+            let expiredate = certinfo.validityNotAfter
+            let releasedate = certinfo.validityNotBefore
+            
+            //issued to
+            var newarrdic = [[String:String]]()
+            if var dic = issuedto as? [String:String]{
+                
+                if let value = dic["Common Name (CN)"] {
+                    dic.removeValue(forKey: "Common Name (CN)")
+                    newarrdic.append(["Common Name (CN)":value])
+                }
+                
+                if let value = dic["Organization (O)"] {
+                    dic.removeValue(forKey: "Organization (O)")
+                    newarrdic.append(["Organization (O)":value])
+                }
+                
+                if let value = dic["Locality (L)"] {
+                    dic.removeValue(forKey: "Locality (L)")
+                    newarrdic.append(["Locality (L)":value])
+                }
+                
+                if let value = dic["State/Province (ST)"] {
+                    dic.removeValue(forKey: "State/Province (ST)")
+                    newarrdic.append(["State/Province (ST)":value])
+                }
+                if let value = dic["Country (C)"] {
+                    dic.removeValue(forKey: "Country (C)")
+                    newarrdic.append(["Country (C)":value])
+                }
+                if  let allkeys = (dic as NSDictionary).allKeys as? [String]{
+                    for key in allkeys{
+                        if let value = dic[key] {
+                            dic.removeValue(forKey: key)
+                            newarrdic.append([key :value])
+                        }
+                        
+                    }
+                }
+
+                allinfoArr.add(newarrdic)
+            }
             
             
             
             
-            
-            allinfoArr.add(issuedto)
-            
-            
+            //
+            //date
+            newarrdic.removeAll()
             let dateFormat1 = DateFormatter()
             dateFormat1.dateFormat = "MM/dd/yyyy, HH:mm:ss"
             let strToday = dateFormat1.string(from: releasedate!) // string with yyyy-MM-dd format
-
             let strexpiryDatey = dateFormat1.string(from: expiredate!) // string with yyyy-MM-dd format
 
 
-            var dic = [
-                "Begins On" : "\(strToday)",
-                "Expires After" : "\(strexpiryDatey)"
-            ]
-            allinfoArr.add(dic)
+//            var dic = [
+//                "Begins On" : "\(strToday)",
+//                "Expires After" : "\(strexpiryDatey)"
+//            ]
             
-            allinfoArr.add(issuarinfo)
+            newarrdic.append(["Begins On" :"\(strToday)"])
+            newarrdic.append(["Expires After" :"\(strexpiryDatey)"])
+            
+            allinfoArr.add(newarrdic)
+            
+            //
+            
+            // issued by
+            newarrdic.removeAll()
+            if var dic = issuarinfo as? [String:String]{
+                
+                if let value = dic["Common Name (CN)"] {
+                    dic.removeValue(forKey: "Common Name (CN)")
+                    newarrdic.append(["Common Name (CN)":value])
+                }
+                
+                if let value = dic["Organization (O)"] {
+                    dic.removeValue(forKey: "Organization (O)")
+                    newarrdic.append(["Organization (O)":value])
+                }
+                
+                if let value = dic["Locality (L)"] {
+                    dic.removeValue(forKey: "Locality (L)")
+                    newarrdic.append(["Locality (L)":value])
+                }
+                
+                if let value = dic["State/Province (ST)"] {
+                    dic.removeValue(forKey: "State/Province (ST)")
+                    newarrdic.append(["State/Province (ST)":value])
+                }
+                if let value = dic["Country (C)"] {
+                    dic.removeValue(forKey: "Country (C)")
+                    newarrdic.append(["Country (C)":value])
+                }
+                if  let allkeys = (dic as NSDictionary).allKeys as? [String]{
+                    for key in allkeys{
+                        if let value = dic[key] {
+                            dic.removeValue(forKey: key)
+                            newarrdic.append([key :value])
+                        }
+                        
+                    }
+                }
+
+                allinfoArr.add(newarrdic)
+            }
+            
+            //allinfoArr.add(issuarinfo)
+
+            //
+
+
+
+            // other
+            newarrdic.removeAll()
+//             dic = [
+//                "Version" : "\(version ?? 0)",
+//                "Serial Number" : "\(serialnumber ?? "")",
+//                "Signature Algorithm" : signaturealgo ?? ""
+//            ]
+            
+            newarrdic.append(["Version" :"\(version ?? 0)"])
+            newarrdic.append(["Serial Number" :serialnumber ?? ""])
+            newarrdic.append(["Signature Algorithm" :signaturealgo ?? ""])
+            allinfoArr.add(newarrdic)
+            //
             
             
-             dic = [
-                "Version" : "\(version ?? 0)",
-                "Serial Number" : "\(serialnumber ?? "")",
-                "Signature Algorithm" : signaturealgo ?? ""
-            ]
             
-            allinfoArr.add(dic)
             
 //            let dic2 = [
 //                "title" : "Expires After",
@@ -221,61 +318,61 @@ class SBProfilesInfoVC: UITableViewController {
         }
         
        // print(datadictionary)
-        print("email\(emails)")
-        var error:Unmanaged<CFError>?
-        if let cfdata = SecKeyCopyExternalRepresentation(publickey!, &error) {
-            if let nsdatatakey = cfdata as? NSData{
-                
-                let newStr1 = String(data: (nsdatatakey as Data).subdata(in: 0 ..< nsdatatakey.count - 1), encoding: .utf8)
-                // unsafe way, provided data is \0-terminated
-                let newStr2 = (nsdatatakey as Data).withUnsafeBytes(String.init(utf8String:))
-                
-                let newdatastring = "\(nsdatatakey)"
-                print(newdatastring)
-                
-                
-                print((nsdatatakey as Data).base64EncodedString())
-                let signatureString = nsdatatakey.base64EncodedString()
-                print(signatureString)
-                
-                
-                do {
-                    let dictionary = try convertToDictionary(from: newdatastring)
-                    print(dictionary) // prints: ["City": "Paris"]
-                } catch {
-                    print(error)
-                }
-                
-                
-                
-                //let dictionary: Dictionary? = NSKeyedUnarchiver.unarchiveObject(with: nsdatatakey as Data) as! [String : Any]
-                //print(dictionary)
-            }
-            
-            
-          var someString: String? = nil
-           if let address = cfdata as? Data {
-               someString = String(data: address, encoding: .ascii)
-            print(someString)
-           }
-            
-        }
-        
-        let mirror = Mirror(reflecting: publickey)
-
-        for case let (label?, value) in mirror.children {
-            print (label, value)
-        }
-
-        
-        var dic = SecKeyCopyAttributes(publickey!)
-        print(dic)
-        
-        
-        
-
-        let cfdata = SecKeyCopyExternalRepresentation(publickey!, nil)
-        print(cfdata)
+//        print("email\(emails)")
+//        var error:Unmanaged<CFError>?
+//        if let cfdata = SecKeyCopyExternalRepresentation(publickey!, &error) {
+//            if let nsdatatakey = cfdata as? NSData{
+//
+//                let newStr1 = String(data: (nsdatatakey as Data).subdata(in: 0 ..< nsdatatakey.count - 1), encoding: .utf8)
+//                // unsafe way, provided data is \0-terminated
+//                let newStr2 = (nsdatatakey as Data).withUnsafeBytes(String.init(utf8String:))
+//
+//                let newdatastring = "\(nsdatatakey)"
+//                print(newdatastring)
+//
+//
+//                print((nsdatatakey as Data).base64EncodedString())
+//                let signatureString = nsdatatakey.base64EncodedString()
+//                print(signatureString)
+//
+//
+//                do {
+//                    let dictionary = try convertToDictionary(from: newdatastring)
+//                    print(dictionary) // prints: ["City": "Paris"]
+//                } catch {
+//                    print(error)
+//                }
+//
+//
+//
+//                //let dictionary: Dictionary? = NSKeyedUnarchiver.unarchiveObject(with: nsdatatakey as Data) as! [String : Any]
+//                //print(dictionary)
+//            }
+//
+//
+//          var someString: String? = nil
+//           if let address = cfdata as? Data {
+//               someString = String(data: address, encoding: .ascii)
+//            print(someString)
+//           }
+//
+//        }
+//
+//        let mirror = Mirror(reflecting: publickey)
+//
+//        for case let (label?, value) in mirror.children {
+//            print (label, value)
+//        }
+//
+//
+//        var dic = SecKeyCopyAttributes(publickey!)
+//        print(dic)
+//
+//
+//
+//
+//        let cfdata = SecKeyCopyExternalRepresentation(publickey!, nil)
+//        print(cfdata)
         
 
         tableView.reloadData()
@@ -299,7 +396,7 @@ class SBProfilesInfoVC: UITableViewController {
         override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
             // #warning Incomplete implementation, return the number of rows
             
-            return (allinfoArr[section] as! NSDictionary).count
+            return (allinfoArr[section] as! NSArray).count
         }
 
         override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -376,11 +473,11 @@ class SBProfilesInfoVC: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "tblcell_sbProfilesInfo") as? tblcell_sbProfilesInfo
         
         cell!.selectionStyle = .none
-        let dic = allinfoArr[indexPath.section] as? NSDictionary
-        
+        let arr = allinfoArr[indexPath.section] as? NSArray
+        var dic = arr![indexPath.row] as? NSDictionary
 //        let group = dic[indexPath.section()] as? OrderedDictionary
         var allkeys = dic?.allKeys
-        let k = allkeys![indexPath.row]
+        let k = allkeys![0]
         
         cell!.lbltitle?.text = k as! String
         cell!.lbldetail?.text = dic?[k ?? ""] as? String

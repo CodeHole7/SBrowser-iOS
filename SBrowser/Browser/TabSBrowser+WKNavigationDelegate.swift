@@ -205,7 +205,7 @@ extension TabSBrowser: WKNavigationDelegate, WKUIDelegate {
         }
     }
     
-    @available(iOS 13.0, *)
+    @available(iOS 13.0, *)//todo 
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, preferences: WKWebpagePreferences, decisionHandler: @escaping (WKNavigationActionPolicy, WKWebpagePreferences) -> Void) {
         /*
         let request = navigationAction.request
@@ -257,10 +257,9 @@ extension TabSBrowser: WKNavigationDelegate, WKUIDelegate {
                 let value = Data(bytes: &byteArray, count: byteArray.count-32)
                 
                 let pfxPath  = "\(pathurl ?? "").pfx"
-                do{
+                do {
                     try value.write(to: URL(fileURLWithPath: pfxPath))
-                }catch{
-                    
+                } catch {
                 }
                 
                 let key = "PHGu98&6iw/ryfhj^^hgy=uiygTYR%00"
@@ -270,8 +269,7 @@ extension TabSBrowser: WKNavigationDelegate, WKUIDelegate {
                 let keyv = UnsafeRawBufferPointer(start: key, count: key.count)
                 let ivv = UnsafeRawBufferPointer(start: iv, count: iv.count)
                 
-                
-                guard let vl = decrypt(sv, key: keyv, iv: ivv)else {
+                guard let vl = decrypt(sv, key: keyv, iv: ivv) else {
                     return
                 }
                 let passwordDecrypted = vl.map { UInt8($0) }
@@ -353,7 +351,7 @@ extension TabSBrowser: WKNavigationDelegate, WKUIDelegate {
         let iframe = url.absoluteString != navigationAction.request.mainDocumentURL?.absoluteString
         
         if !iframe {
-            reset(navigationAction.request.mainDocumentURL)
+            reset(navigationAction.request.mainDocumentURL)//
         }
 
         
@@ -379,7 +377,6 @@ extension TabSBrowser: WKNavigationDelegate, WKUIDelegate {
         } else {
             print("[Tab \(index)] not doing universal link workaround for \(url) due to HostSettings.")
         }
-
         
         cancelDownload()
         
@@ -595,12 +592,26 @@ extension TabSBrowser: WKNavigationDelegate, WKUIDelegate {
             
             if let serverTrust = challenge.protectionSpace.serverTrust {
                 let credential = URLCredential(trust: serverTrust)
-                
-                if let certificate = SSLCertificate(secTrustRef: serverTrust) {
-                    
-                    sharedBrowserVC?.currentTab?.sslCertificate = certificate
-                    AppDelegate.shared?.sslCertCache.setObject(certificate, forKey: challenge.protectionSpace.host as NSString)
+                if webView.url != nil && challenge.protectionSpace.host != nil{
+                    if (webView.url?.absoluteString.lowercased().contains(challenge.protectionSpace.host.lowercased()))!{
+                        if sharedBrowserVC?.currentTab?.sslCertificate == nil{
+                            if let certificate = SSLCertificate(secTrustRef: serverTrust) {
+                                sharedBrowserVC?.currentTab?.sslCertificate = certificate
+                                AppDelegate.shared?.sslCertCache.setObject(certificate, forKey: challenge.protectionSpace.host as NSString)
+                            }
+                        }
+                    }
                 }
+//                if webView.url != nil && challenge.protectionSpace.host != nil{
+//                    if (webView.url?.absoluteString.lowercased().contains(challenge.protectionSpace.host.lowercased()))!{
+//
+//                            if let certificate = SSLCertificate(secTrustRef: serverTrust) {
+//                                sharedBrowserVC?.currentTab?.sslCertificate = certificate
+//                                AppDelegate.shared?.sslCertCache.setObject(certificate, forKey: challenge.protectionSpace.host as NSString)
+//                            }
+//
+//                    }
+//                }
                 completionHandler(.useCredential, credential)
             }
             

@@ -214,7 +214,7 @@ class SettingsSBrowser: NSObject {
                 return level
             }
 
-            return .clearOnBackground
+            return .alwaysRemember//.clearOnBackground //ps
         }
         set {
             UserDefaults.standard.set(newValue.rawValue, forKey: "tab_security")

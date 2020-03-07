@@ -120,4 +120,14 @@ class TabCellSBrowser: UICollectionViewCell, UIGestureRecognizerDelegate {
             center = originalCenter
         }
     }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        title.text = ""
+        for v in container.subviews {
+            v.removeFromSuperview()
+        }
+        container.subviews.first?.isHidden = false
+    }
+    
 }

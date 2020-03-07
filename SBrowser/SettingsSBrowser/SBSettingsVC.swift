@@ -54,8 +54,8 @@ class SBSettingsVC: SBFixedFormVC {
             
            <<< homepageRow
                 .onCellSelection({ (_, _) in
-                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                    let HomePageSettingVC = storyboard.instantiateViewController(withIdentifier: "SBHomePageSettingVC")
+                    //let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                    let HomePageSettingVC = currentStoryboard.instantiateViewController(withIdentifier: "SBHomePageSettingVC")
                     self.navigationController?.pushViewController(HomePageSettingVC, animated: true)
                    // self.present(SBHomePageSettingVC.instantiate(), nil)
                 })
@@ -154,6 +154,7 @@ class SBSettingsVC: SBFixedFormVC {
                     SBStorageFirstVC(), animated: true)
             }
             //ps
+            
             <<< LabelRow() {
                 $0.title = NSLocalizedString("Profiles", comment: "Option title")
             //    $0.selectorTitle = $0.title
@@ -162,12 +163,22 @@ class SBSettingsVC: SBFixedFormVC {
                 $0.cell.accessoryType = .disclosureIndicator
               //  $0.cell.selectionStyle = .default
                 $0.cell.textLabel?.numberOfLines = 0
+                if Credentials.shared().identities!.count == 0{
+                  //  $0.cell.isHidden = true
+                  //  $0.cell.frame = CGRect(x: $0.cell.frame.minX, y: $0.cell.frame.minX, width: $0.cell.frame.width, height: 0)
+                    //$0.indexPath
+                    $0.disabled = Condition(booleanLiteral: true)
+                    $0.hidden = Condition(booleanLiteral: true)
+                         //   self.tableView.deleteRows(at: [IndexPath(item: 1, section: 2)], with: .none)
+                }else{
+                    ///$0.cell.isHidden = false
+                }
             }
-
             .onCellSelection { _, _ in
                 self.navigationController?.pushViewController(
                     SBProfilesVC(), animated: true)
             }
+            
             //ps
             <<< PushRow<SettingsSBrowser.TlsVersion>() {
                 $0.title = NSLocalizedString("TLS Version", comment: "Option title")

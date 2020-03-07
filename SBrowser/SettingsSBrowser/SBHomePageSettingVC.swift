@@ -29,8 +29,8 @@ class SBHomePageSettingVC: UIViewController {
     @objc
     class func instantiate() -> UINavigationController {
         
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "SBHomePageSettingVC")
+        //let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let vc = currentStoryboard.instantiateViewController(withIdentifier: "SBHomePageSettingVC")
         return UINavigationController(rootViewController: vc)
     }
     
@@ -64,12 +64,14 @@ class SBHomePageSettingVC: UIViewController {
         if segmentcontrol.selectedSegmentIndex == 0{
                 print("0")
             isDefaultnCustomSelection(isDefault: true, isUseCurrentPage: false)
-            
+            textfieldUrl.isEnabled = false
         }else if segmentcontrol.selectedSegmentIndex == 1{
             print("1")
             isDefaultnCustomSelection(isDefault: false, isUseCurrentPage: true)
+            textfieldUrl.isEnabled = false
         }else if segmentcontrol.selectedSegmentIndex == 2{
             isDefaultnCustomSelection(isDefault: false, isUseCurrentPage: false)
+            textfieldUrl.isEnabled = true
             print("2")
         }
     }

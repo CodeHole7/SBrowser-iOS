@@ -84,6 +84,7 @@
 		2765578223D9DD36006FAA96 /* BookmarksViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2765578123D9DD36006FAA96 /* BookmarksViewController.xib */; };
 		2792DA692403AF0500BC4882 /* tblcell_sbProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2792DA672403AF0500BC4882 /* tblcell_sbProfiles.swift */; };
 		2792DA6A2403AF0500BC4882 /* tblcell_sbProfiles.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2792DA682403AF0500BC4882 /* tblcell_sbProfiles.xib */; };
+		27A2A35F2410DDC200723D5C /* Main-iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 27A2A35C2410CA6900723D5C /* Main-iPad.storyboard */; };
 		27A3E4BB23DC24E600695180 /* FavIconCellSBrowser.xib in Resources */ = {isa = PBXBuildFile; fileRef = 27A3E4BA23DC24E600695180 /* FavIconCellSBrowser.xib */; };
 		27A3E4BE23DC264A00695180 /* SBSecurityPopUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27A3E4BC23DC264A00695180 /* SBSecurityPopUpViewController.swift */; };
 		27A3E4BF23DC264A00695180 /* SBSecurityPopUpViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 27A3E4BD23DC264A00695180 /* SBSecurityPopUpViewController.xib */; };
@@ -245,6 +246,7 @@
 		2765578123D9DD36006FAA96 /* BookmarksViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BookmarksViewController.xib; sourceTree = "<group>"; };
 		2792DA672403AF0500BC4882 /* tblcell_sbProfiles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tblcell_sbProfiles.swift; sourceTree = "<group>"; };
 		2792DA682403AF0500BC4882 /* tblcell_sbProfiles.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = tblcell_sbProfiles.xib; sourceTree = "<group>"; };
+		27A2A35D2410CA6900723D5C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = "Base.lproj/Main-iPad.storyboard"; sourceTree = "<group>"; };
 		27A3E4BA23DC24E600695180 /* FavIconCellSBrowser.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FavIconCellSBrowser.xib; sourceTree = "<group>"; };
 		27A3E4BC23DC264A00695180 /* SBSecurityPopUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SBSecurityPopUpViewController.swift; sourceTree = "<group>"; };
 		27A3E4BD23DC264A00695180 /* SBSecurityPopUpViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SBSecurityPopUpViewController.xib; sourceTree = "<group>"; };
@@ -523,6 +525,7 @@
 				273D8A7823D583ED00ADA171 /* ViewController.swift */,
 				2710B5DD23DEF75400F97C73 /* SBSearchTableVC.swift */,
 				273D8A7A23D583ED00ADA171 /* Main.storyboard */,
+				27A2A35C2410CA6900723D5C /* Main-iPad.storyboard */,
 				273D8A8023D5840400ADA171 /* Assets.xcassets */,
 				273D8A8223D5840400ADA171 /* LaunchScreen.storyboard */,
 				273D8A8523D5840400ADA171 /* Info.plist */,
@@ -808,6 +811,7 @@
 				270ADCBA23E0052D0071E9E4 /* https-everywhere_targets.plist in Resources */,
 				270ADCB923E0052D0071E9E4 /* https-everywhere_rules.plist in Resources */,
 				271180D023D886C500EA331F /* newTab.html in Resources */,
+				27A2A35F2410DDC200723D5C /* Main-iPad.storyboard in Resources */,
 				2792DA6A2403AF0500BC4882 /* tblcell_sbProfiles.xib in Resources */,
 				2765577223D9CD13006FAA96 /* BookmarkCellSBrowser.xib in Resources */,
 				273D8A7C23D583ED00ADA171 /* Main.storyboard in Resources */,
@@ -1080,6 +1084,14 @@
 				273D8A8323D5840400ADA171 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		27A2A35C2410CA6900723D5C /* Main-iPad.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				27A2A35D2410CA6900723D5C /* Base */,
+			);
+			name = "Main-iPad.storyboard";
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

@@ -17,6 +17,19 @@ let kHomePage = "HomePageSB"
 let rootviewController = UIApplication.shared.keyWindow!.rootViewController as! BrowserViewController
 var shouldRedirectAfterCertImport = false
 var redirecturl:URL?
+
+
+
+var currentStoryboard: UIStoryboard {
+    if UIDevice.current.userInterfaceIdiom == .pad {
+        return UIStoryboard(name: "Main-iPad", bundle: nil)
+    } else {
+        return UIStoryboard(name: "Main", bundle: nil)
+    }
+}
+
+
+
 class Downloader {
     class func load(url: URL, to localUrl: URL, completion: @escaping () -> ()) {
         let sessionConfig = URLSessionConfiguration.default
@@ -107,3 +120,14 @@ func pathForTemporaryFile(withPrefix prefix: String?) -> String? {
 
     return result
 }
+
+
+
+
+//
+//
+//enum UIUserInterfaceIdiom : Int {
+//    case unspecified
+//    case phone 
+//    case pad
+//}

@@ -77,6 +77,12 @@ extension URL {
     var isSpecial: Bool {
         switch self {
         case URL.blank, URL.aboutSBrowser, URL.credits, URL.start:
+            
+            //vishnu
+            if self.absoluteString != "default" && (self.absoluteString as? NSString)?.lastPathComponent != "newTab.html" {
+                return false
+            }
+            //
             return true
             
         default:

@@ -79,6 +79,7 @@ func credentialImport(_ credentialImport: CredentialImportController!, didImport
         return sharedBrowserVC
     }
     
+    @IBOutlet weak var lblTitleHeader: UILabel!
     @IBOutlet weak var viewHeader: UIView!
     @IBOutlet weak var searchBar: UISearchBar!{
         didSet {
@@ -94,6 +95,15 @@ func credentialImport(_ credentialImport: CredentialImportController!, didImport
             toolbarHeight = viewFooterHeightConstraint?.constant
         }
     }
+    
+    @IBOutlet weak var viewHeaderHeightConstraint: NSLayoutConstraint? {
+        didSet {
+            searchBarHeight = viewHeaderHeightConstraint?.constant
+        }
+    }
+    
+    
+    
     @IBOutlet weak var progressView: UIProgressView!
     @IBOutlet weak var viewTabsCollection: UIView!
     @IBOutlet weak var collectionViewTabs: UICollectionView! {
@@ -122,6 +132,7 @@ func credentialImport(_ credentialImport: CredentialImportController!, didImport
     
     @IBOutlet weak var btnSecurity: UIButton!
     
+    @IBOutlet weak var searchFiled_trailing: NSLayoutConstraint!
     
     @objc
     enum Transition: Int {
@@ -192,11 +203,26 @@ func credentialImport(_ credentialImport: CredentialImportController!, didImport
     }()
     
     
+//    init() {
+//        var nib = String(describing: type(of: self))
+//
+//        if UIDevice.current.userInterfaceIdiom == .pad {
+//            nib += "-iPad"
+//        }
+//
+//        super.init(nibName: nib, bundle: Bundle(for: type(of: self)))
+//    }
+//
+//    required init?(coder: NSCoder) {
+//        super.init(coder: coder)
+//    }
     
+    var customConstraints = [NSLayoutConstraint]()
     
     var blackLayer = UIView()
     override func viewDidLoad() {
         super.viewDidLoad()
+        
 
         // Do any additional setup after loading the view.
         sharedBrowserVC = self
@@ -341,7 +367,7 @@ func credentialImport(_ credentialImport: CredentialImportController!, didImport
     }
     
     @IBAction func clickedPrivateTab(_ sender: UIButton) {
-        action(sender)
+      //  action(sender)  ps
     }
     
     @IBAction func clickedAddTab(_ sender: UIButton) {
@@ -363,12 +389,21 @@ func credentialImport(_ credentialImport: CredentialImportController!, didImport
             self.viewHeader.isHidden = true
             viewContainer.isHidden = true
             viewTabsCollection.isHidden = false
+            
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                self.viewFooter.isHidden = false//Only in ipad
+                viewFooterHeightConstraint?.constant = toolbarHeight ?? 0
+            }
         } else {
             tabsTools.isHidden = true
             mainTools.isHidden = false
             self.viewHeader.isHidden = false
             viewContainer.isHidden = false
             viewTabsCollection.isHidden = true
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                self.viewFooter.isHidden = true//Only in ipad
+                viewFooterHeightConstraint?.constant =  0
+            }
         }
     }
     
