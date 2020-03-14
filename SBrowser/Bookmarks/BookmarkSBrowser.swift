@@ -30,8 +30,8 @@ class BookmarkSBrowser: NSObject {
         var defaults = [BookmarkSBrowser]()
 
         defaults.append(BookmarkSBrowser(name: "Google", url: "https://www.google.com/"))
-        defaults.append(BookmarkSBrowser(name: "Yahoo", url: "https://www.yahoo.com"))
-        defaults.append(BookmarkSBrowser(name: "Facebook", url: "https://facebook.com"))
+        defaults.append(BookmarkSBrowser(name: "Yahoo", url: "https://in.yahoo.com"))
+        defaults.append(BookmarkSBrowser(name: "Facebook", url: "https://m.facebook.com"))
         defaults.append(BookmarkSBrowser(name: "Instagram", url: "https://www.instagram.com"))
         defaults.append(BookmarkSBrowser(name: "iCloud", url: "https://www.icloud.com"))
         defaults.append(BookmarkSBrowser(name: "Twitter", url: "https://twitter.com/"))
@@ -319,4 +319,4 @@ class BookmarkSBrowser: NSObject {
         ])
     }
 
-}
+}//End of class

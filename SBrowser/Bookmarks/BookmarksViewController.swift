@@ -57,6 +57,7 @@ class BookmarksViewController: UIViewController, UITableViewDataSource, UITableV
         searchController.obscuresBackgroundDuringPresentation = false
         definesPresentationContext = true
         navigationItem.searchController = searchController
+        
     }
 
     override func viewWillAppear(_ animated: Bool) {

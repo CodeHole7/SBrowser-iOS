@@ -576,6 +576,15 @@ extension TabSBrowser: UIActivityItemSource {
         if activityType == .message && isImageOrAv {
             return downloadedFile
         }
+        
+        //vishnu
+        
+        if url.scheme == "https" {
+            url = URL(string: url.absoluteString.replacingOccurrences(of: "https", with: "sbrowserhttps")) ?? url
+        } else if url.scheme == "http" {
+            url = URL(string: url.absoluteString.replacingOccurrences(of: "http", with: "sbrowserhttp")) ?? url
+        }
+  
 
         return url
     }

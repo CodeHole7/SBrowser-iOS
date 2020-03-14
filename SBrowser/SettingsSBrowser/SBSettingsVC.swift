@@ -45,6 +45,8 @@ class SBSettingsVC: SBFixedFormVC {
             barButtonSystemItem: .done, target: self, action: #selector(dismsiss_))
         navigationItem.title = NSLocalizedString("Settings", comment: "Scene title")
         
+        self.view.backgroundColor = .bgColor
+        
         form
             
             

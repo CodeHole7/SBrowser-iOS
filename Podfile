@@ -24,6 +24,8 @@ target 'SBrowser' do
   pod 'SDCAlertView', '~> 10'
   pod 'FavIcon', git: 'https://github.com/tladesignz/FavIcon.git', branch: 'swift-5'
   pod 'SwiftKeychainWrapper'
+  
+  pod 'google-cast-sdk', '< 5.0', '>=4.4.3'
 
   
   target 'SBrowserTests' do

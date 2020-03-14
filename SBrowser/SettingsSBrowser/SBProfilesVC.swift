@@ -24,7 +24,7 @@ class SBProfilesVC: UITableViewController {
      //   self.tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
-        tableView.backgroundColor = UIColor(red: 229/255, green: 229/255, blue: 229/255, alpha: 1)
+        tableView.backgroundColor = UIColor.bgColor//UIColor(red: 229/255, green: 229/255, blue: 229/255, alpha: 1)
             tableView.register(UINib(nibName: "tblcell_sbProfiles", bundle: nil), forCellReuseIdentifier: "tblcell_sbProfiles")
     }
     

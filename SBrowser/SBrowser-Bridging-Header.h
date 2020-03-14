@@ -27,3 +27,5 @@
 #import "CredentialImportController.h"
 #import "DebugOptions.h"
 #import "ClientIdentityController.h"
+
+#import "JAHPCacheStoragePolicy.h"

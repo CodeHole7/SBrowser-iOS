@@ -10,7 +10,7 @@ import UIKit
 
 @available(iOS 13.0, *)
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-
+    
     var window: UIWindow?
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -22,17 +22,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
         // continue to create view controllers for window
                 
-        //let storyboard = UIStoryboard(name: "Main-iPad", bundle: nil)
-        let viewController = currentStoryboard.instantiateViewController(withIdentifier: "BrowserViewController") as! BrowserViewController
-            
-        if window == nil {
-            window = UIWindow(frame: UIScreen.main.bounds)
-            window?.backgroundColor = .accent
-        }
-
-        window?.rootViewController?.restorationIdentifier = String(describing: type(of: viewController))
-        window?.rootViewController = viewController
-        window?.makeKeyAndVisible()
+//        let viewController = currentStoryboard.instantiateViewController(withIdentifier: "BrowserViewController") as! BrowserViewController
+//
+//        if window == nil {
+//            window = UIWindow(frame: UIScreen.main.bounds)
+//            window?.backgroundColor = .accent
+//        }
+//
+//        window?.rootViewController?.restorationIdentifier = String(describing: type(of: viewController))
+//        window?.rootViewController = viewController
+//        window?.makeKeyAndVisible()
 
        // UIView.transition(with: window!, duration: 0.3, options: .transitionCrossDissolve,  animations: {}, completion: completion)
                 
@@ -67,6 +66,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         // Save changes in the application's managed object context when the application transitions to the background.
         (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
+        
+        
+        if !(AppDelegate.shared?.testing ?? false) {
+            HostSettingsSBrowser.store()
+            AppDelegate.shared?.hstsCache?.persist()
+        }
+        if isAutoSweepEnabled {
+            SBTabSecurity.handleBackgrounding()
+        }
+        
     }
     
     

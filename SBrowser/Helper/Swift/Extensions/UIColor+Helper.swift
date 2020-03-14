@@ -39,4 +39,8 @@ public extension UIColor {
      */
     @objc
     static var ok = UIColor(named: "Ok")
+    
+    
+    @objc
+    static var bgColor = UIColor(named: "bgColor")
 }

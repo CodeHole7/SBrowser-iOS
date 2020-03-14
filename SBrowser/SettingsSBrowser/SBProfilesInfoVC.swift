@@ -22,7 +22,7 @@ class SBProfilesInfoVC: UITableViewController {
         self.tableView.tableFooterView = UIView()
         self.tableView.tableFooterView?.isHidden = true
         Getinfo()
-        tableView.backgroundColor = UIColor(red: 229/255, green: 229/255, blue: 229/255, alpha: 1)
+        tableView.backgroundColor = UIColor.bgColor//UIColor(red: 229/255, green: 229/255, blue: 229/255, alpha: 1)
         tableView.register(UINib(nibName: "tblcell_sbProfilesInfo", bundle: nil), forCellReuseIdentifier: "tblcell_sbProfilesInfo")
     }
     

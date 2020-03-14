@@ -17,6 +17,7 @@ let kHomePage = "HomePageSB"
 let rootviewController = UIApplication.shared.keyWindow!.rootViewController as! BrowserViewController
 var shouldRedirectAfterCertImport = false
 var redirecturl:URL?
+var isAutoSweepEnabled = false
 
 
 

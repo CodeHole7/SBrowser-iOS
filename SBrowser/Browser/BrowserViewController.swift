@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import GoogleCast
+import AVKit
 
 internal var sharedBrowserVC: BrowserViewController?
 
@@ -104,6 +106,7 @@ func credentialImport(_ credentialImport: CredentialImportController!, didImport
     
     
     
+    @IBOutlet weak var viewCannotOpenThePage: UIView!
     @IBOutlet weak var progressView: UIProgressView!
     @IBOutlet weak var viewTabsCollection: UIView!
     @IBOutlet weak var collectionViewTabs: UICollectionView! {
@@ -133,6 +136,9 @@ func credentialImport(_ credentialImport: CredentialImportController!, didImport
     @IBOutlet weak var btnSecurity: UIButton!
     
     @IBOutlet weak var searchFiled_trailing: NSLayoutConstraint!
+    
+    @IBOutlet weak var castButton: GCKUICastButton!
+    
     
     @objc
     enum Transition: Int {
@@ -220,6 +226,14 @@ func credentialImport(_ credentialImport: CredentialImportController!, didImport
     var customConstraints = [NSLayoutConstraint]()
     
     var blackLayer = UIView()
+    
+    
+    //ChromeCast
+    
+    private var sessionManager: GCKSessionManager!
+    private var mediaInformation: GCKMediaInformation?
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -241,13 +255,22 @@ func credentialImport(_ credentialImport: CredentialImportController!, didImport
         
         searchBar.backgroundImage = UIImage()
         searchBar.delegate = self
+        searchBar.autocapitalizationType = .none
         updateChrome()
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.webViewFinishOrErrorNotificaiton(notification:)), name: NSNotification.Name(kWebViewFinishOrError), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.addNewBlankTab(notification:)), name: NSNotification.Name(kAddNewBlankTab), object: nil)
         
+        //Google Cast
+        sessionManager = GCKCastContext.sharedInstance().sessionManager
+        sessionManager.add(self)
         
+        NotificationCenter.default.addObserver(self,
+        selector: #selector(castDeviceDidChange(notification:)),
+        name: NSNotification.Name.gckCastStateDidChange,
+        object: GCKCastContext.sharedInstance())
         
+      
         
     }
     
@@ -327,6 +350,36 @@ func credentialImport(_ credentialImport: CredentialImportController!, didImport
         updateChrome()
     }
     
+    //Google Cast
+    @objc func castDeviceDidChange(notification _: Notification) {
+      if GCKCastContext.sharedInstance().castState != GCKCastState.noDevicesAvailable {
+        // Display the instructions for how to use Google Cast on the first app use.
+        GCKCastContext.sharedInstance().presentCastInstructionsViewControllerOnce(with: castButton)
+      }
+    }
+    
+    func playChromeCast(mediaItem: MediaItem) {
+        
+        if sessionManager.currentSession == nil {
+          print("Cast device not connected")
+          return
+        }
+        
+        mediaInformation = mediaItem.mediaInformation
+        
+        let mediaLoadRequestDataBuilder = GCKMediaLoadRequestDataBuilder()
+        mediaLoadRequestDataBuilder.mediaInformation = mediaItem.mediaInformation
+
+        // Send a load request to the remote media client.
+        if let request = sessionManager.currentSession?.remoteMediaClient?.loadMedia(with: mediaLoadRequestDataBuilder.build()) {
+          request.delegate = self
+        }
+    }
+    
+    
+  
+    
+    
     @objc func addNewBlankTab(notification: Notification) {
         addNewTabSBrowser(URL.start, transition: .notAnimated)
     }
@@ -389,6 +442,7 @@ func credentialImport(_ credentialImport: CredentialImportController!, didImport
             self.viewHeader.isHidden = true
             viewContainer.isHidden = true
             viewTabsCollection.isHidden = false
+            
             
             if UIDevice.current.userInterfaceIdiom == .pad {
                 self.viewFooter.isHidden = false//Only in ipad
@@ -913,3 +967,89 @@ func credentialImport(_ credentialImport: CredentialImportController!, didImport
         navigationController?.dismiss(animated: true)
     }
 } //End of class
+
+
+extension BrowserViewController: GCKSessionManagerListener, GCKRemoteMediaClientListener, GCKRequestDelegate {
+    
+    // MARK: GCKSessionManagerListener
+
+    func sessionManager(_: GCKSessionManager,
+                        didStart session: GCKSession) {
+      print("sessionManager didStartSession: \(session)")
+
+      // Add GCKRemoteMediaClientListener.
+      session.remoteMediaClient?.add(self)
+
+    }
+
+    func sessionManager(_: GCKSessionManager,
+                        didResumeSession session: GCKSession) {
+      print("sessionManager didResumeSession: \(session)")
+
+      // Add GCKRemoteMediaClientListener.
+      session.remoteMediaClient?.add(self)
+
+    }
+
+    func sessionManager(_: GCKSessionManager,
+                        didEnd session: GCKSession,
+                        withError error: Error?) {
+      print("sessionManager didEndSession: \(session)")
+
+      // Remove GCKRemoteMediaClientListener.
+      session.remoteMediaClient?.remove(self)
+
+      if let error = error {
+        showError(error)
+      }
+
+    }
+
+    func sessionManager(_: GCKSessionManager,
+                        didFailToStart session: GCKSession,
+                        withError error: Error) {
+      print("sessionManager didFailToStartSessionWithError: \(session) error: \(error)")
+
+      // Remove GCKRemoteMediaClientListener.
+      session.remoteMediaClient?.remove(self)
+
+    }
+
+    // MARK: GCKRemoteMediaClientListener
+
+    func remoteMediaClient(_: GCKRemoteMediaClient,
+                           didUpdate mediaStatus: GCKMediaStatus?) {
+      if let mediaStatus = mediaStatus {
+        mediaInformation = mediaStatus.mediaInformation
+      }
+    }
+
+    // MARK: - GCKRequestDelegate
+
+    func requestDidComplete(_ request: GCKRequest) {
+      print("request \(Int(request.requestID)) completed")
+    }
+
+    func request(_ request: GCKRequest,
+                 didFailWithError error: GCKError) {
+      print("request \(Int(request.requestID)) didFailWithError \(error)")
+    }
+
+    func request(_ request: GCKRequest,
+                 didAbortWith abortReason: GCKRequestAbortReason) {
+      print("request \(Int(request.requestID)) didAbortWith reason \(abortReason)")
+    }
+
+    // MARK: Misc
+
+    func showError(_ error: Error) {
+      let alertController = UIAlertController(title: "Error",
+                                              message: error.localizedDescription,
+                                              preferredStyle: UIAlertController.Style.alert)
+      let action = UIAlertAction(title: "Ok", style: UIAlertAction.Style.default, handler: nil)
+      alertController.addAction(action)
+
+      present(alertController, animated: true, completion: nil)
+    }
+    
+}

@@ -38,7 +38,7 @@ class SBStorageFirstVC: SBFixedFormVC {
         }
 
     }
-    var isAutoSweepEnabled = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         if let val = UserDefaults.standard.object(forKey: "isAutoSweepEnabled") as? Bool{
@@ -85,7 +85,7 @@ class SBStorageFirstVC: SBFixedFormVC {
                     .onChange { row in
                         if let value = row.value {
                             UserDefaults.standard.set(value, forKey: "isAutoSweepEnabled")
-                            self.isAutoSweepEnabled = value
+                            isAutoSweepEnabled = value
                           //  self.tableView.reloadData()
                             let cell = self.tableView.cellForRow(at: IndexPath(item: 1, section: 1))
                             cell?.isUserInteractionEnabled = value

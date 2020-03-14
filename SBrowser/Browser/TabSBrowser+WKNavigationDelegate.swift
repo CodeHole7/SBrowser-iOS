@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CSPHeader
 
 extension TabSBrowser: WKNavigationDelegate, WKUIDelegate {
     
@@ -98,9 +99,251 @@ extension TabSBrowser: WKNavigationDelegate, WKUIDelegate {
 //        }
 //        return supportedMIMETypesSSupportedCredentialTypes
 //    }
+    
+    
+    
+    func popTemporarilyAllowedURLSwift(url: URL) -> TemporarilyAllowedURLSwift? {
+        var ret: TemporarilyAllowedURLSwift?
+        var found = -1
+        for i in 0..<tmpAllowed.count {
+            if tmpAllowed[i].url?.absoluteString == url.absoluteString {
+                found = i
+                ret = tmpAllowed[i]
+            }
+        }
+        if found > -1 {
+            tmpAllowed.remove(at: found)
+        }
+        return ret
+    }
+    
+    
+    
+    func cspNonce()-> String {
+        if _cspNonce == "" {
+            let data = NSMutableData(length: 16)
+            if let bytes = data?.mutableBytes {
+                if (SecRandomCopyBytes(kSecRandomDefault, 16, bytes) != 0) {
+                    abort()
+                }
+                _cspNonce = data?.base64EncodedString(options: NSData.Base64EncodingOptions.init(rawValue: 0)) ?? ""
+            }
+        }
+        return _cspNonce
+    }
+    
+    func caseInsensitiveHeader(_ header: String?, in response: HTTPURLResponse?) -> String? {
+        var o: String?
+        for h in response?.allHeaderFields ?? [:] {
+            if let hKey = h.key as? String {
+                if (hKey.lowercased() == header?.lowercased()) {
+                    if let h = h as? AnyHashable {
+                        o = response?.allHeaderFields[h] as? String
+                    }
+                    
+                    // XXX: does webview always honor the first matching header or the last one?
+                    break
+                }
+            }
+        }
+
+        return o
+    }
+    
     func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
         
          print(" delegate 2: ################################ decidePolicyFor navigationResponse: WKNavigationResponse")
+        
+        
+        
+        
+        //vks conent policy
+        
+        
+        var cacheStoragePolicy: URLCache.StoragePolicy?
+        var statusCode: Int?
+        
+                
+        /* rewrite or inject Content-Security-Policy (and X-Webkit-CSP just in case) headers */
+        if let url = webView.url, let host = url.host, var response = navigationResponse.response as? HTTPURLResponse {
+            
+            cacheStoragePolicy = JAHPCacheStoragePolicyForRequestAndResponse(NSURLRequest(url: url) as URLRequest, response)
+            statusCode = response.statusCode
+            
+            //[[self class] authenticatingHTTPProtocol:self logWithFormat:@"received response %zd / %@ with cache storage policy %zu", (ssize_t) statusCode, [response URL], (size_t) cacheStoragePolicy];
+            
+            _contentType = CONTENT_TYPE_OTHER
+            _isFirstChunk = true
+            
+//            if(_wvt && [[dataTask.currentRequest URL] isEqual:[dataTask.currentRequest mainDocumentURL]]) {
+//                [_wvt setUrl:[dataTask.currentRequest URL]];
+//            }
+            
+            if var ctype = caseInsensitiveHeader("content-type", in: response)?.lowercased() {
+                if ctype.hasPrefix("text/html") || ctype.hasPrefix("application/html") || ctype.hasPrefix("application/xhtml+xml") {
+                    _contentType = CONTENT_TYPE_HTML
+                } else {
+                    // TODO: keep adding new content types as needed
+                    // Determine if the content type is a file type
+                    // we can present.
+                    
+                    let types = [
+                    "application/x-apple-diskimage",
+                    "application/binary",
+                    "application/octet-stream",
+                    "application/pdf",
+                    "application/x-gzip",
+                    "application/x-xz",
+                    "application/zip",
+                    "audio/",
+                    "audio/mpeg",
+                    "image/",
+                    "image/gif",
+                    "image/jpg",
+                    "image/jpeg",
+                    "image/png",
+                    "video/",
+                    "video/x-flv",
+                    "video/ogg",
+                    "video/webm"
+                    ];
+                    
+                    // TODO: (performance) could use a dictionary of dictionaries matching on type and subtype
+
+                    for type in types {
+                        if ctype.hasPrefix(type) {
+                            _contentType = CONTENT_TYPE_FILE
+                        }
+                    }
+                    
+                }
+            }
+            
+            
+            
+            if _contentType == CONTENT_TYPE_FILE && _isOrigin && !_isTemporarilyAllowed {
+                if var fakeHeaders = NSMutableDictionary(dictionary: response.allHeaderFields) as? [String : String] {
+                    fakeHeaders["Content-Type"] = "text/html"
+                    fakeHeaders["Content-Length"] = "0"
+                    fakeHeaders["Content-Length"] = "Cache-Control: no-cache, no-store, must-revalidate"
+                    
+                    // Notify the client that the request finished loading so that
+                    // the requests's url enters its navigation history.
+                    //[self.client URLProtocol:self didReceiveResponse:fakeResponse cacheStoragePolicy:NSURLCacheStorageNotAllowed];
+                }
+                
+            }
+            
+            
+            
+            
+        
+            let cspMode = HostSettingsSBrowser.for(host).contentPolicy
+            if var responseHeaders = NSMutableDictionary(dictionary: response.allHeaderFields) as? [String : String] {
+                var cspHeader = CSPHeader(headers: responseHeaders)
+                let none = NoneSource()
+                // Allow styles and images, nothing else. However, don't open up styles and
+                // images restrictions further than the original server response allows.
+                
+                if cspMode == .strict {
+                    let all = HostSource.all()
+                    var style = cspHeader.get(StyleDirective.self)
+                    if style == nil {
+                        style = StyleDirective([UnsafeInlineSource(), all])
+                    }
+                    
+                    var img = cspHeader.get(ImgDirective.self)
+                    if img == nil {
+                        img = ImgDirective(all)
+                    }
+                        
+                    let deflt = DefaultDirective(none)
+                    let sandbox = SandboxDirective([AllowFormsSource(),AllowTopNavigationSource(),AllowScripts()])
+                    cspHeader = CSPHeader(directives: [deflt, (style ?? StyleDirective(all)), (img ?? ImgDirective(all)), sandbox])
+                } else if cspMode == .blockXhr {
+                    // Don't allow XHR, WebSockets, audio and video.
+                    cspHeader.addOrReplace(ConnectDirective([none]))
+                    cspHeader.addOrReplace(MediaDirective([none]))
+                    cspHeader.addOrReplace(ObjectDirective([none]))
+                    
+                }
+                
+                // Always allow communication within the app.
+                let schemeSource = SchemeSource(scheme: "endlessipc")
+                
+                cspHeader.prepend(ChildDirective([schemeSource]))
+                cspHeader.prepend(FrameDirective([schemeSource]))
+                cspHeader.prepend(DefaultDirective([schemeSource]))
+                
+                // Allow our script to run.
+                cspHeader.allowInjectedScript(nonce: cspNonce())
+                responseHeaders = cspHeader.applyTo(headers: responseHeaders)
+                
+                /* rebuild our response with any modified headers */
+                //response = [[NSHTTPURLResponse alloc] initWithURL:[httpResponse URL] statusCode:[httpResponse statusCode] HTTPVersion:@"1.1" headerFields:responseHeaders];
+                response = HTTPURLResponse(url: url, statusCode: statusCode ?? response.statusCode, httpVersion: "1.1", headerFields: responseHeaders) ?? response
+                
+                /* save any cookies we just received
+                Note that we need to do the same thing in the
+                - (void)URLSession:task:willPerformHTTPRedirection
+                */
+                AppDelegate.shared?.cookieJar.setCookies(HTTPCookie.cookies(withResponseHeaderFields: responseHeaders, for: url), for: url, mainDocumentURL: url, forTab: UInt(self.hash))
+                
+                /* in case of localStorage */
+                AppDelegate.shared?.cookieJar.trackDataAccess(forDomain: host, fromTab: UInt(self.hash))
+                
+                
+//                if ([[[self.request URL] scheme] isEqualToString:@"https"]) {
+//                    NSString *hsts = [[(NSHTTPURLResponse *)response allHeaderFields] objectForKey:HSTS_HEADER];
+//                    if (hsts != nil && ![hsts isEqualToString:@""]) {
+//                        [AppDelegate.shared.hstsCache parseHSTSHeader:hsts forHost:[[self.request URL] host]];
+//                    }
+//                }
+                
+                if url.scheme == "https" {
+                    let hsts = responseHeaders[HSTS_HEADER]
+                    if hsts != nil && hsts != "" {
+                        AppDelegate.shared?.hstsCache?.parseHSTSHeader(hsts, forHost: host)
+                    }
+                }
+                
+                
+                
+                
+                if let allowedUrl = popTemporarilyAllowedURLSwift(url: url) {
+                    _isTemporarilyAllowed = true
+                    _isOCSPRequest = allowedUrl.ocspRequest ?? false
+                } else {
+                    _isTemporarilyAllowed = false
+                    _isOCSPRequest = false
+                }
+                
+                if _isOCSPRequest && self.secureMode.rawValue > SecureMode.insecure.rawValue && url.scheme?.lowercased() == "https" {
+                    /* an element on the page was not sent over https but the initial request was, downgrade to mixed */
+                    if self.secureMode.rawValue > SecureMode.insecure.rawValue {
+                        self.secureMode = SecureMode.mixed
+                    }
+                }
+                
+                //[[self client] URLProtocol:self didReceiveResponse:response cacheStoragePolicy:cacheStoragePolicy];
+                
+                
+                
+            }
+            
+        } else {
+            cacheStoragePolicy = URLCache.StoragePolicy.notAllowed
+            statusCode = 42
+        }
+        
+        
+        //end conent plicy
+        
+        
+        
+        
+        
+        
         
         
         //ps//
@@ -353,7 +596,7 @@ extension TabSBrowser: WKNavigationDelegate, WKUIDelegate {
         if !iframe {
             reset(navigationAction.request.mainDocumentURL)//
         }
-
+        
         
         if HostSettingsSBrowser.for(url.host).universalLinkProtection {
             if iframe && navigationAction.navigationType != .linkActivated //.linkClicked//vishnu
@@ -376,6 +619,23 @@ extension TabSBrowser: WKNavigationDelegate, WKUIDelegate {
             }
         } else {
             print("[Tab \(index)] not doing universal link workaround for \(url) due to HostSettings.")
+        }
+        
+        if let hostname = webView.url?.host {
+            if sharedBrowserVC?.currentTab?.sslCertificate == nil {
+                if let cert = AppDelegate.shared?.allSSLCertificates[hostname] {
+                    sharedBrowserVC?.currentTab?.sslCertificate = cert
+                } else {
+                    if let certificatesAll = AppDelegate.shared?.allSSLCertificates {
+                        for cert in certificatesAll {
+                            if cert.key.contains(hostname) || hostname.contains(cert.key) {
+                                sharedBrowserVC?.currentTab?.sslCertificate = cert.value
+                                break
+                            }
+                        }
+                    }
+                }
+            }
         }
         
         cancelDownload()
@@ -407,6 +667,13 @@ extension TabSBrowser: WKNavigationDelegate, WKUIDelegate {
             }
        
     }*/
+    
+    
+    func containHostCertificates(host: String, certificate: SSLCertificate) {
+    
+        AppDelegate.shared?.allSSLCertificates[host] = certificate
+    }
+    
 
     ///
     
@@ -518,6 +785,7 @@ extension TabSBrowser: WKNavigationDelegate, WKUIDelegate {
         
         //sharedBrowserVC?.currentTab?.sslCertificate = nil
         guard let hostname = webView.url?.host else {
+            completionHandler(.performDefaultHandling, nil)
             return
         }
 
@@ -598,6 +866,9 @@ extension TabSBrowser: WKNavigationDelegate, WKUIDelegate {
                             if let certificate = SSLCertificate(secTrustRef: serverTrust) {
                                 sharedBrowserVC?.currentTab?.sslCertificate = certificate
                                 AppDelegate.shared?.sslCertCache.setObject(certificate, forKey: challenge.protectionSpace.host as NSString)
+                                
+                                containHostCertificates(host: hostname, certificate: certificate)
+                                
                             }
                         }
                     }
@@ -613,11 +884,13 @@ extension TabSBrowser: WKNavigationDelegate, WKUIDelegate {
 //                    }
 //                }
                 completionHandler(.useCredential, credential)
+                return
             }
             
             else{
                  //completionHandler(.useCredential, nil)
                 completionHandler(.performDefaultHandling, nil)
+                return
             }
             
             return
@@ -697,8 +970,10 @@ extension TabSBrowser: WKNavigationDelegate, WKUIDelegate {
                             persistence = DebugOptions.shared().credentialPersistence
                             credential = URLCredential(identity: rootviewController.identity!, certificates: nil, persistence: persistence)
                             completionHandler(URLSession.AuthChallengeDisposition.useCredential, credential);
+                            return
                         }else{
                             completionHandler(.cancelAuthenticationChallenge, nil);
+                            return
                         }
                         
                         //completionHandler(.cancelAuthenticationChallenge, nil);
@@ -714,6 +989,7 @@ extension TabSBrowser: WKNavigationDelegate, WKUIDelegate {
                 }
             }else{
                 completionHandler(.cancelAuthenticationChallenge, nil);
+                return
             }
         }
         else{
@@ -728,11 +1004,18 @@ extension TabSBrowser: WKNavigationDelegate, WKUIDelegate {
     
     func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         progress = 0.1
+        
+        sharedBrowserVC?.viewCannotOpenThePage.isHidden = true
+        sharedBrowserVC?.viewContainer.isHidden = false
     }
     
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         
         progress = 1
+        
+        
+        sharedBrowserVC?.viewCannotOpenThePage.isHidden = true
+        sharedBrowserVC?.viewContainer.isHidden = false
         
         // If we have JavaScript blocked, these will be empty.
         var finalUrl = stringByEvaluatingJavaScript(from: "window.location.href")
@@ -770,6 +1053,15 @@ extension TabSBrowser: WKNavigationDelegate, WKUIDelegate {
 
         progress = 0
         NotificationCenter.default.post(name: NSNotification.Name(kWebViewFinishOrError), object: nil, userInfo: nil)
+        
+        
+        //Chrome Cast
+        
+        if url.pathExtension == "m3u8" || url.pathExtension == "mp4" {
+            let mediaItem = MediaItem(url: url, title: url.lastPathComponent, subTitle: nil, imageURL: nil)
+            sharedBrowserVC?.playChromeCast(mediaItem: mediaItem)
+        }
+        
     }
     
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
@@ -780,12 +1072,14 @@ extension TabSBrowser: WKNavigationDelegate, WKUIDelegate {
         }
 
         progress = 0
-
+        
         let error = error as NSError
 
         if error.domain == NSURLErrorDomain && error.code == NSURLErrorCancelled {
             return
         }
+        
+        
 
         // "The operation couldn't be completed. (Cocoa error 3072.)" - useless
         if error.domain == NSCocoaErrorDomain && error.code == NSUserCancelledError {
@@ -865,16 +1159,23 @@ extension TabSBrowser: WKNavigationDelegate, WKUIDelegate {
                 }))
         }
 
-        tabDelegate?.presentSBTab(alert, nil)//vishnu
+        //tabDelegate?.presentSBTab(alert, nil)//vishnu //vishnu should be not commented
 
         self.webView(webView, didFinish: navigation)
         
         progress = 0
         NotificationCenter.default.post(name: NSNotification.Name(kWebViewFinishOrError), object: nil, userInfo: nil)
+        
+        sharedBrowserVC?.viewCannotOpenThePage.isHidden = false
+        sharedBrowserVC?.viewContainer.isHidden = true
     }
     
     func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
         progress = 0
+        
+        sharedBrowserVC?.viewCannotOpenThePage.isHidden = false
+        sharedBrowserVC?.viewContainer.isHidden = true
+        
         NotificationCenter.default.post(name: NSNotification.Name(kWebViewFinishOrError), object: nil, userInfo: nil)
     }
     

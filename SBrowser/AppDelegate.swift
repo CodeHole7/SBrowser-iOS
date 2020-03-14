@@ -11,9 +11,12 @@ import CoreData
 import AVFoundation
 import DeviceCheck
 import SwiftKeychainWrapper
+import GoogleCast
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, JAHPAuthenticatingHTTPProtocolDelegate {
+    
+    
     
     @objc
     static let socksProxyPort = 39050
@@ -55,6 +58,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, JAHPAuthenticatingHTTPPro
     
     var window: UIWindow?
     
+    var allSSLCertificates = [String:SSLCertificate]()
     
        
     
@@ -175,11 +179,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate, JAHPAuthenticatingHTTPPro
     }
     
     
+    
+    //Google Cast`
+    // You can add your own app id here that you get by registering with the Google Cast SDK
+    // Developer Console https://cast.google.com/publish or use kGCKDefaultMediaReceiverApplicationID
+    let kReceiverAppID = kGCKDefaultMediaReceiverApplicationID
+    let kDebugLoggingEnabled = true
+    
+    
+    
     // MARK: UIApplicationDelegate
 
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         
         deviceCheck()
+        
+        if let val = UserDefaults.standard.object(forKey: "isAutoSweepEnabled") as? Bool{
+            isAutoSweepEnabled = val
+        }else{
+            isAutoSweepEnabled = false
+        }
         
         //UserDefaults.standard.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
         //UserDefaults.standard.removeObject(forKey: kOldHisotries)
@@ -198,19 +217,97 @@ class AppDelegate: UIResponder, UIApplicationDelegate, JAHPAuthenticatingHTTPPro
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
 
-        //let storyboard = UIStoryboard(name: "Main-iPad", bundle: nil)
-        let viewController = currentStoryboard.instantiateViewController(withIdentifier: "BrowserViewController") as! BrowserViewController
+        ////Google Cast start
         
-        //show(viewController)
+        // Set your receiver application ID.
+        let criteria = GCKDiscoveryCriteria(applicationID: kReceiverAppID)
+        let options = GCKCastOptions(discoveryCriteria: criteria)
+        options.physicalVolumeButtonsWillControlDeviceVolume = true
+        GCKCastContext.setSharedInstanceWith(options)
+
+        // Configure widget styling.
+        // Theme using UIAppearance.
+        //UINavigationBar.appearance().barTintColor = .lightGray
+        let colorAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
+        UINavigationBar().titleTextAttributes = colorAttributes
+        GCKUICastButton.appearance().tintColor = .gray
+
+        // Theme using GCKUIStyle.
+        let castStyle = GCKUIStyle.sharedInstance()
+        // Set the property of the desired cast widgets.
+        castStyle.castViews.deviceControl.buttonTextColor = .darkGray
+        // Refresh all currently visible views with the assigned styles.
+        
+        castStyle.castViews.backgroundColor = .bgColor ?? .lightGray
+        //castStyle.castViews.mediaControl.expandedController.iconTintColor = .green
+        castStyle.castViews.mediaControl.miniController.backgroundColor = .bgColor ?? .lightGray
+        castStyle.castViews.iconTintColor = .orange
+        castStyle.castViews.bodyTextColor = .systemGray
+        castStyle.castViews.captionTextColor = .systemPink
+        castStyle.castViews.headingTextColor = .lightGray
+        castStyle.castViews.deviceControl.iconTintColor = .orange
+        castStyle.castViews.buttonTextColor = .systemGray
+        
+        castStyle.apply()
+
+        // Enable default expanded controller.
+        GCKCastContext.sharedInstance().useDefaultExpandedMediaControls = true
+
+        // Enable logger.
+        GCKLogger.sharedInstance().delegate = self
+
+        // Set logger filter.
+        let filter = GCKLoggerFilter()
+        filter.minimumLevel = .verbose
+        GCKLogger.sharedInstance().filter = filter
+        
         
         if #available(iOS 13.0, *) {
-            //Do nothing here
+                     
+            let scene = UIApplication.shared.connectedScenes.first
+            if let sd : SceneDelegate = (scene?.delegate as? SceneDelegate) {             
+
+                // Wrap main view in the GCKUICastContainerViewController and display the mini controller.
+                let viewController = currentStoryboard.instantiateViewController(withIdentifier: "BrowserViewController") as! BrowserViewController
+                let castContainerVC = GCKCastContext.sharedInstance().createCastContainerController(for: viewController)
+                castContainerVC.miniMediaControlsItemEnabled = true
+                // Color the background to match the embedded content
+                castContainerVC.view.backgroundColor = .white
+
+                sd.window?.rootViewController?.restorationIdentifier = String(describing: type(of: castContainerVC))
+                sd.window?.rootViewController = castContainerVC
+                sd.window?.makeKeyAndVisible()
+                
+                UIView.transition(with: sd.window!, duration: 0.3, options: .transitionCrossDissolve, animations: {}, completion: nil)
+            }
+            
+            
         } else {
-//            window = UIWindow(frame: UIScreen.main.bounds)
-//            window?.makeKeyAndVisible()
-            show(viewController)
+            
+            if window == nil {
+                window = UIWindow(frame: UIScreen.main.bounds)
+                window?.backgroundColor = .accent
+            }
+
+            // Wrap main view in the GCKUICastContainerViewController and display the mini controller.
+            let viewController = currentStoryboard.instantiateViewController(withIdentifier: "BrowserViewController") as! BrowserViewController
+            let castContainerVC = GCKCastContext.sharedInstance().createCastContainerController(for: viewController)
+            castContainerVC.miniMediaControlsItemEnabled = true
+            // Color the background to match the embedded content
+            castContainerVC.view.backgroundColor = .white
+
+            window?.rootViewController?.restorationIdentifier = String(describing: type(of: castContainerVC))
+            window?.rootViewController = castContainerVC
+            window?.makeKeyAndVisible()
+            
+            UIView.transition(with: window!, duration: 0.3, options: .transitionCrossDissolve,
+                              animations: {}, completion: nil)
         }
         
+        
+        
+        
+        ////Google Cast end
         
         
         if let shortcut = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem {
@@ -218,6 +315,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate, JAHPAuthenticatingHTTPPro
         }
         
         NotificationCenter.default.post(name: NSNotification.Name(kAddNewBlankTab), object: nil, userInfo: nil)
+        
+        
+//        let viewController = currentStoryboard.instantiateViewController(withIdentifier: "BrowserViewController") as! BrowserViewController
+//
+//        if #available(iOS 13.0, *) {
+//            //Do nothing here
+//        } else {
+//            //            window = UIWindow(frame: UIScreen.main.bounds)
+//            //            window?.makeKeyAndVisible()
+//            show(viewController)
+//        }
+        
+        
         
         return true
     }
@@ -235,7 +345,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, JAHPAuthenticatingHTTPPro
             hstsCache?.persist()
         }
 
-        SBTabSecurity.handleBackgrounding()
+        if isAutoSweepEnabled {
+            SBTabSecurity.handleBackgrounding()
+        }
         application.ignoreSnapshotOnNextApplicationLaunch()
     }
 
@@ -247,6 +359,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, JAHPAuthenticatingHTTPPro
         cookieJar.clearAllNonWhitelistedData()
         DownloadHelper.deleteDownloadsDirectory()
         application.ignoreSnapshotOnNextApplicationLaunch()
+        
+        
+        
     }
 
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
@@ -593,5 +708,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, JAHPAuthenticatingHTTPPro
         }
     }
 
-}
+} //EOC
 
+
+
+
+
+// MARK: - GCKLoggerDelegate
+
+extension AppDelegate: GCKLoggerDelegate {
+  func logMessage(_ message: String,
+                  at _: GCKLoggerLevel,
+                  fromFunction function: String,
+                  location: String) {
+    if kDebugLoggingEnabled {
+      print("\(location): \(function) - \(message)")
+    }
+  }
+}

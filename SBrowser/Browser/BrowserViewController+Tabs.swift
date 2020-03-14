@@ -43,6 +43,7 @@ UICollectionViewDropDelegate, TabCellSBrowserDelegate {
             self.mainTools?.isHidden = true
             self.tabsTools.isHidden = false
             self.updateUIOnTabSelection(isEnable: true)
+            self.viewCannotOpenThePage.isHidden = true
         })
     }
 
@@ -101,6 +102,7 @@ UICollectionViewDropDelegate, TabCellSBrowserDelegate {
             tab.isUserInteractionEnabled = false
 
             cell.delegate = self
+          
         }
 
         return cell
@@ -225,6 +227,7 @@ UICollectionViewDropDelegate, TabCellSBrowserDelegate {
             self.tabsTools.isHidden = true
             self.mainTools?.isHidden = false
             self.updateUIOnTabSelection(isEnable: false)
+            self.viewCannotOpenThePage.isHidden = true
         }, completion)
     }
 }

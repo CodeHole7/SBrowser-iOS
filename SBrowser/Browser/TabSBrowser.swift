@@ -42,6 +42,13 @@ class TabSBrowser: UIView {
         case secureEv
     }
 
+    var _cspNonce = ""
+    var tmpAllowed = [TemporarilyAllowedURLSwift]()
+    var _isTemporarilyAllowed = false
+    var _isOCSPRequest = false
+    var _contentType: Int32 = 0
+    var _isFirstChunk = false
+    var _isOrigin = false
 
     weak var tabDelegate: TabSBrowserDelegate?
 
@@ -128,14 +135,17 @@ class TabSBrowser: UIView {
         let preferences = WKPreferences()
         let webConfiguration = WKWebViewConfiguration()
         webConfiguration.preferences = preferences
-        
+          
         let view = WKWebView(frame: .zero, configuration: webConfiguration)
         
 //        let userAgentValue = "Chrome/56.0.0.0 Mobile"
 //        view.customUserAgent = userAgentValue
 
-
 //        let view = WKWebView()
+        view.allowsBackForwardNavigationGestures = true
+        view.allowsLinkPreview = true
+        
+        
         view.navigationDelegate = self
         view.uiDelegate = self
         return view.add(to: self)
@@ -245,7 +255,7 @@ class TabSBrowser: UIView {
 //        }else{
 //            reset()
 //        }
-    
+            
         if let url = request?.url {
             reset(url)
             
@@ -298,9 +308,8 @@ class TabSBrowser: UIView {
         
     //
         
-        
-        
         self.url = url ?? URL.start
+        
     }
 
     @objc

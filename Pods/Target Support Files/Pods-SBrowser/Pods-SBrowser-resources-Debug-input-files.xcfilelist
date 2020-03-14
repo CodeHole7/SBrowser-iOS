@@ -1,4 +1,5 @@
 ${PODS_ROOT}/Target Support Files/Pods-SBrowser/Pods-SBrowser-resources.sh
-${PODS_ROOT}/Eureka/Source/Resources/Eureka.bundle
 ${PODS_CONFIGURATION_BUILD_DIR}/SDCAlertView/SDCAlertView.bundle
 ${PODS_CONFIGURATION_BUILD_DIR}/TUSafariActivity/TUSafariActivity.bundle
+${PODS_ROOT}/google-cast-sdk/GoogleCastSDK-ios-4.4.7_static/GoogleCast.framework/GoogleCastCoreResources.bundle
+${PODS_ROOT}/google-cast-sdk/GoogleCastSDK-ios-4.4.7_static/GoogleCast.framework/GoogleCastUIResources.bundle

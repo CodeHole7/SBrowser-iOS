@@ -97,14 +97,16 @@ EOM
   esac
 }
 if [[ "$CONFIGURATION" == "Debug" ]]; then
-  install_resource "${PODS_ROOT}/Eureka/Source/Resources/Eureka.bundle"
   install_resource "${PODS_CONFIGURATION_BUILD_DIR}/SDCAlertView/SDCAlertView.bundle"
   install_resource "${PODS_CONFIGURATION_BUILD_DIR}/TUSafariActivity/TUSafariActivity.bundle"
+  install_resource "${PODS_ROOT}/google-cast-sdk/GoogleCastSDK-ios-4.4.7_static/GoogleCast.framework/GoogleCastCoreResources.bundle"
+  install_resource "${PODS_ROOT}/google-cast-sdk/GoogleCastSDK-ios-4.4.7_static/GoogleCast.framework/GoogleCastUIResources.bundle"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
-  install_resource "${PODS_ROOT}/Eureka/Source/Resources/Eureka.bundle"
   install_resource "${PODS_CONFIGURATION_BUILD_DIR}/SDCAlertView/SDCAlertView.bundle"
   install_resource "${PODS_CONFIGURATION_BUILD_DIR}/TUSafariActivity/TUSafariActivity.bundle"
+  install_resource "${PODS_ROOT}/google-cast-sdk/GoogleCastSDK-ios-4.4.7_static/GoogleCast.framework/GoogleCastCoreResources.bundle"
+  install_resource "${PODS_ROOT}/google-cast-sdk/GoogleCastSDK-ios-4.4.7_static/GoogleCast.framework/GoogleCastUIResources.bundle"
 fi
 
 mkdir -p "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"

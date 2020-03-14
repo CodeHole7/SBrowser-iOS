@@ -98,6 +98,8 @@
 		27A3E4CF23DC2E3C00695180 /* OtherClasses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27A3E4CE23DC2E3C00695180 /* OtherClasses.swift */; };
 		27D109D2240786CA003D3217 /* tblcell_sbProfilesInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D109D0240786CA003D3217 /* tblcell_sbProfilesInfo.swift */; };
 		27D109D3240786CA003D3217 /* tblcell_sbProfilesInfo.xib in Resources */ = {isa = PBXBuildFile; fileRef = 27D109D1240786CA003D3217 /* tblcell_sbProfilesInfo.xib */; };
+		27D8962F241B6EF00036570D /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D8962E241B6EF00036570D /* Toast.swift */; };
+		27D89631241B73E40036570D /* MediaItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D89630241B73E40036570D /* MediaItem.swift */; };
 		27E00E3F23E1506600E88CB5 /* SBHistoryVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E00E3E23E1506600E88CB5 /* SBHistoryVC.swift */; };
 		27E00E4123E160D600E88CB5 /* SBHistoryTempVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E00E4023E160D600E88CB5 /* SBHistoryTempVC.swift */; };
 		27E00E4323E1675F00E88CB5 /* OtherHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E00E4223E1675F00E88CB5 /* OtherHelper.swift */; };
@@ -260,6 +262,8 @@
 		27A3E4CE23DC2E3C00695180 /* OtherClasses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherClasses.swift; sourceTree = "<group>"; };
 		27D109D0240786CA003D3217 /* tblcell_sbProfilesInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tblcell_sbProfilesInfo.swift; sourceTree = "<group>"; };
 		27D109D1240786CA003D3217 /* tblcell_sbProfilesInfo.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = tblcell_sbProfilesInfo.xib; sourceTree = "<group>"; };
+		27D8962E241B6EF00036570D /* Toast.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
+		27D89630241B73E40036570D /* MediaItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaItem.swift; sourceTree = "<group>"; };
 		27E00E3E23E1506600E88CB5 /* SBHistoryVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SBHistoryVC.swift; sourceTree = "<group>"; };
 		27E00E4023E160D600E88CB5 /* SBHistoryTempVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBHistoryTempVC.swift; sourceTree = "<group>"; };
 		27E00E4223E1675F00E88CB5 /* OtherHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherHelper.swift; sourceTree = "<group>"; };
@@ -516,6 +520,7 @@
 		273D8A7323D583ED00ADA171 /* SBrowser */ = {
 			isa = PBXGroup;
 			children = (
+				27D8962B241B6EDB0036570D /* ChromeCast */,
 				2710B5C723DEBBAC00F97C73 /* SBMigration */,
 				270910E923D812B400F45F7A /* SettingsSBrowser */,
 				270E3D7523D5CC9F009A96C1 /* Browser */,
@@ -596,6 +601,15 @@
 			path = Bookmarks;
 			sourceTree = "<group>";
 		};
+		27D8962B241B6EDB0036570D /* ChromeCast */ = {
+			isa = PBXGroup;
+			children = (
+				27D8962E241B6EF00036570D /* Toast.swift */,
+				27D89630241B73E40036570D /* MediaItem.swift */,
+			);
+			path = ChromeCast;
+			sourceTree = "<group>";
+		};
 		27EC0A3923DB0A5E00D81B14 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -625,11 +639,11 @@
 				27EC0D5D23DB301D00D81B14 /* CertificateAuthentication.h */,
 				27EC0D5E23DB301D00D81B14 /* JAHPCanonicalRequest.h */,
 				27EC0D5F23DB301D00D81B14 /* JAHPCacheStoragePolicy.h */,
+				27EC0D6423DB301D00D81B14 /* JAHPAuthenticatingHTTPProtocol.h */,
 				27EC0D6023DB301D00D81B14 /* JAHPAuthenticatingHTTPProtocol.m */,
 				27EC0D6123DB301D00D81B14 /* DownloadHelper.h */,
 				27EC0D6223DB301D00D81B14 /* JAHPQNSURLSessionDemux.h */,
 				27EC0D6323DB301D00D81B14 /* CertificateAuthentication.m */,
-				27EC0D6423DB301D00D81B14 /* JAHPAuthenticatingHTTPProtocol.h */,
 				27EC0D6523DB301D00D81B14 /* JAHPCacheStoragePolicy.m */,
 				27EC0D6623DB301D00D81B14 /* JAHPCanonicalRequest.m */,
 			);
@@ -955,6 +969,7 @@
 				2710B5CF23DEBFC700F97C73 /* SBBridge.m in Sources */,
 				27EC09F323DABD6D00D81B14 /* UIViewController+Helper.swift in Sources */,
 				271455CE23F54BF600188403 /* ChallengeHandler.m in Sources */,
+				27D89631241B73E40036570D /* MediaItem.swift in Sources */,
 				27E9AE1923D98AA800BF0A56 /* WKWebView+Helper.swift in Sources */,
 				2710904523DC11B300B503BE /* AlertSBrowser.swift in Sources */,
 				273D8A7F23D583ED00ADA171 /* SBrowser.xcdatamodeld in Sources */,
@@ -1016,6 +1031,7 @@
 				27EC0D9823DB302700D81B14 /* SSLCertificateViewController.m in Sources */,
 				2710B5D423DEEB1700F97C73 /* SBBlurredSnapshot.swift in Sources */,
 				270910E823D811AC00F45F7A /* LiveSearchSBrowserViewController.swift in Sources */,
+				27D8962F241B6EF00036570D /* Toast.swift in Sources */,
 				270E3D7723D5CCE8009A96C1 /* BrowserViewController.swift in Sources */,
 				270910F823D8548100F45F7A /* HostSettingsSBrowser.swift in Sources */,
 				2710904323DC102300B503BE /* TabSBrowser+Helper.swift in Sources */,

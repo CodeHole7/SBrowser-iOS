@@ -21,3 +21,14 @@ class SBFixedFormVC: FormViewController {
         super.keyboardWillShow(notification)
     }
 }
+
+class TemporarilyAllowedURLSwift: NSObject {
+    var url: URL?
+    var wvt: TabSBrowser?
+    var ocspRequest: Bool?
+    init(url: URL, wvt: TabSBrowser, isOCSPRequest: Bool) {
+        self.url = url
+        self.wvt = wvt
+        self.ocspRequest = isOCSPRequest
+    }
+}
