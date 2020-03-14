@@ -23,6 +23,7 @@ target 'SBrowser' do
   pod 'Reachability', '~> 3.2'
   pod 'SDCAlertView', '~> 10'
   pod 'FavIcon', git: 'https://github.com/tladesignz/FavIcon.git', branch: 'swift-5'
+  pod 'SwiftKeychainWrapper'
 
   
   target 'SBrowserTests' do

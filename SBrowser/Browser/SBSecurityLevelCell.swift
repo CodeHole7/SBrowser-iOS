@@ -2,7 +2,7 @@
 //  SBSecurityLevelCell.swift
 //  SBrowser
 //
-//  Created by JinXu on 24/01/20.
+//  Created by Jin Xu on 25/01/20.
 //  Copyright © 2020 SBrowser. All rights reserved.
 //
 
@@ -22,7 +22,7 @@ class SBSecurityLevelCell: UITableViewCell {
         return 64
     }
 
-    static var shieldImage = UIImage(named: "shield")
+    static var shieldImage = UIImage(named: "Shield")
     static var customShieldImage = UIImage(named: "custom-shield")
 
 

@@ -2,7 +2,7 @@
 //  BrowserViewController+Tabs.swift
 //  SBrowser
 //
-//  Created by JinXu on 22/01/20.
+//  Created by Jin Xu on 22/01/20.
 //  Copyright © 2020 SBrowser. All rights reserved.
 //
 
@@ -13,7 +13,12 @@ UICollectionViewDelegateFlowLayout, UICollectionViewDragDelegate,
 UICollectionViewDropDelegate, TabCellSBrowserDelegate {
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        return collectionViewTabs?.isHidden ?? true ? .default : .lightContent
+        if Thread.isMainThread{
+            return collectionViewTabs?.isHidden ?? true ? .default : .lightContent
+        }else{
+            return .lightContent
+        }
+        
     }
 
     @objc func showOverview() {
@@ -63,7 +68,30 @@ UICollectionViewDropDelegate, TabCellSBrowserDelegate {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TabCellSBrowser.reuseIdentifier, for: indexPath)
 
+        /*
         if let cell = cell as? TabCellSBrowser {
+            let tab = tabs[indexPath.row]
+
+            cell.title.text = tab.title
+
+//            tab.add(to: cell.container)
+            tab.translatesAutoresizingMaskIntoConstraints = false
+            cell.container.addSubview(tab)
+            tab.leadingAnchor.constraint(equalTo: cell.container.leadingAnchor).isActive = true
+            tab.trailingAnchor.constraint(equalTo: cell.container.trailingAnchor).isActive = true
+            tab.topAnchor.constraint(equalTo: cell.container.topAnchor).isActive = true
+            tab.bottomAnchor.constraint(equalTo: cell.container.bottomAnchor).isActive = true
+//            tab.frame = cell.container.frame
+//            tab.translatesAutoresizingMaskIntoConstraints = false
+            tab.isHidden = false
+            tab.isUserInteractionEnabled = false
+
+            cell.delegate = self
+        }
+        */
+        
+        if let cell = cell as? TabCellSBrowser {
+            
             let tab = tabs[indexPath.row]
 
             cell.title.text = tab.title
@@ -101,6 +129,7 @@ UICollectionViewDropDelegate, TabCellSBrowserDelegate {
         return CGSize(width: width, height: width / 4 * 3)
     }
 
+    
 
     // MARK: UICollectionViewDragDelegate
 

@@ -175,8 +175,7 @@ static NSDictionary *_preloadedHosts;
 				/* TODO: if a preloaded entry exists, cache a negative entry */
 				[self removeObjectForKey:host];
 				return;
-			}
-			else {
+			} else {
 				NSDate *expire = [[NSDate date] dateByAddingTimeInterval:age];
 				[params setObject:expire forKey:HSTS_KEY_EXPIRATION];
 			}

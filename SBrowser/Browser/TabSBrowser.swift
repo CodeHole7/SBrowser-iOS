@@ -2,7 +2,7 @@
 //  TabSBrowser.swift
 //  SBrowser
 //
-//  Created by JinXu on 21/01/20.
+//  Created by Jin Xu on 21/01/20.
 //  Copyright © 2020 SBrowser. All rights reserved.
 //
 
@@ -27,7 +27,7 @@ protocol TabSBrowserDelegate: class {
 
     func getIndex(of tab: TabSBrowser) -> Int?
 
-    //func present(_ vc: UIViewController, _ sender: UIView?)
+    func presentSBTab(_ vc: UIViewController, _ sender: UIView?)
 
     func unfocusSearchField()
 }
@@ -84,11 +84,9 @@ class TabSBrowser: UIView {
         didSet {
             if sslCertificate == nil {
                 secureMode = .insecure
-            }
-            else if sslCertificate?.isEV ?? false {
+            } else if sslCertificate?.isEV ?? false {
                 secureMode = .secureEv
-            }
-            else {
+            } else {
                 secureMode = .secure
             }
         }
@@ -109,8 +107,8 @@ class TabSBrowser: UIView {
     static let historySize = 40
     var skipHistory = false
 
-//    var history = [HistoryViewController.Item]()
-//
+    var history = [HistoryItem]()
+
     override var isUserInteractionEnabled: Bool {
         didSet {
             if previewController != nil {
@@ -125,12 +123,21 @@ class TabSBrowser: UIView {
     }
 
     private(set) lazy var webView: WKWebView = {
-        let view = WKWebView()
-        view.navigationDelegate = self
         
-//        view.scalesPageToFit = true
-//        view.allowsInlineMediaPlayback = true
+        
+        let preferences = WKPreferences()
+        let webConfiguration = WKWebViewConfiguration()
+        webConfiguration.preferences = preferences
+        
+        let view = WKWebView(frame: .zero, configuration: webConfiguration)
+        
+//        let userAgentValue = "Chrome/56.0.0.0 Mobile"
+//        view.customUserAgent = userAgentValue
 
+
+//        let view = WKWebView()
+        view.navigationDelegate = self
+        view.uiDelegate = self
         return view.add(to: self)
     }()
 
@@ -217,23 +224,47 @@ class TabSBrowser: UIView {
         load(request)
     }
 
-    func load(_ request: URLRequest?) {
+    func load(_ request: URLRequest?) {//
         DispatchQueue.main.async {
             self.webView.stopLoading()
         }
-
-        reset()
-
+//        if let url = request?.url {
+//            if let oldurl = webView.url {
+//                if url == oldurl{
+//                    applicableHttpsEverywhereRules.removeAllObjects()
+//                    applicableUrlBlockerTargets.removeAllObjects()
+////                    sslCertificate = nil
+//                    self.url = url ?? URL.start
+//                }else{
+//                    reset()
+//                }
+//            }else{
+//                reset()
+//            }
+//
+//        }else{
+//            reset()
+//        }
+    
+        if let url = request?.url {
+            reset(url)
+            
+        }else{
+            reset()
+        }
+//reset()  //ps
         let request = request ?? URLRequest(url: URL.start)
 
         if let url = request.url {
             if url == URL.start {
-                BookmarkSBrowser.updateStartPage()
+                if url.lastPathComponent == "newTab.html"{
+                    BookmarkSBrowser.updateStartPage()
+                }
             }
 
             self.url = url
         }
-
+        
         DispatchQueue.main.async {
             self.webView.load(request)
         }
@@ -247,7 +278,28 @@ class TabSBrowser: UIView {
     func reset(_ url: URL? = nil) {
         applicableHttpsEverywhereRules.removeAllObjects()
         applicableUrlBlockerTargets.removeAllObjects()
-        sslCertificate = nil
+        //sslCertificate = nil//ps
+        
+//ps
+        if let url = url {
+            if let oldurl = webView.url {
+                if url == oldurl{
+                    
+                }else{
+                    sslCertificate = nil
+                }
+            }else{
+                sslCertificate = nil
+            }
+            
+        }else{
+            sslCertificate = nil
+        }
+        
+    //
+        
+        
+        
         self.url = url ?? URL.start
     }
 
@@ -255,9 +307,9 @@ class TabSBrowser: UIView {
     func goBack() {
         if webView.canGoBack {
             skipHistory = true
+            sslCertificate = nil//ps
             webView.goBack()
-        }
-        else if let parentId = parentId {
+        } else if let parentId = parentId {
             tabDelegate?.removeTabSBrowser(self, focus: tabDelegate?.getTabSBrowser(hash: parentId))
         }
     }
@@ -266,6 +318,7 @@ class TabSBrowser: UIView {
     func goForward() {
         if webView.canGoForward {
             skipHistory = true
+            sslCertificate = nil//ps
             webView.goForward()
         }
     }
@@ -274,7 +327,6 @@ class TabSBrowser: UIView {
     func stringByEvaluatingJavaScript(from script: String) -> String? {
         return webView.stringByEvaluatingJavaScript(from: script)
     }
-
 
     // MARK: Private Methods
     
@@ -327,8 +379,8 @@ class TabSBrowser: UIView {
 
 
     deinit {
-        cancelDownload()
         
+        cancelDownload()
         observation = nil
 
         let block = {

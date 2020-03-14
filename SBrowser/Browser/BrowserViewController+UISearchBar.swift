@@ -2,7 +2,7 @@
 //  BrowserViewController+UISearchBar.swift
 //  SBrowser
 //
-//  Created by JinXu on 21/01/20.
+//  Created by Jin Xu on 21/01/20.
 //  Copyright © 2020 SBrowser. All rights reserved.
 //
 
@@ -35,12 +35,10 @@ extension BrowserViewController: UISearchBarDelegate {
 
                 if let currentTab = self.currentTab {
                     currentTab.load(url)
-                }
-                else {
+                } else {
                     self.addNewTabSBrowser(url)
                 }
-            }
-            else {
+            } else {
                 self.debug("#textFieldShouldReturn search=\(String(describing: search))")
 
                 if self.currentTab == nil {
@@ -58,7 +56,9 @@ extension BrowserViewController: UISearchBarDelegate {
         updateSearchField()
     }
     
-    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        searchDidChange()
+    }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         
@@ -133,6 +133,40 @@ extension BrowserViewController: UISearchBarDelegate {
         encryptionBt.setImage(encryptionIcon, for: .normal)
         searchBar.textField.leftViewMode = searchBar.isFirstResponder || encryptionIcon == nil ? .never : .always
         
+    }
+    
+    // MARK: Actions
+
+    @IBAction func searchDidChange() {
+        guard SettingsSBrowser.searchLive else {
+            return
+        }
+
+        if parseSearch(searchBar.text) != nil {
+            // That's not a search, that's a valid URL. -> Remove live search results.
+
+            return liveSearchVc.hide()
+        }
+
+        if !liveSearchVc.searchOngoing {
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                present(liveSearchVc, searchBar)
+            }
+            else {
+                addChild(liveSearchVc)
+
+                liveSearchVc.view.translatesAutoresizingMaskIntoConstraints = false
+                view.addSubview(liveSearchVc.view)
+                liveSearchVc.view.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+                liveSearchVc.view.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+                liveSearchVc.view.topAnchor.constraint(equalTo: searchBar.bottomAnchor).isActive = true
+                liveSearchVc.view.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+            }
+
+            liveSearchVc.searchOngoing = true
+        }
+
+        liveSearchVc.update(searchBar.text, tab: currentTab)
     }
     
     

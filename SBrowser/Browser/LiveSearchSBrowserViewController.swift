@@ -2,7 +2,7 @@
 //  LiveSearchSBrowserViewController.swift
 //  SBrowser
 //
-//  Created by JinXu on 22/01/20.
+//  Created by Jin Xu on 22/01/20.
 //  Copyright © 2020 SBrowser. All rights reserved.
 //
 
@@ -119,7 +119,9 @@ class LiveSearchSBrowserViewController: UITableViewController {
 
             // Allow request without a tab.
             JAHPAuthenticatingHTTPProtocol.temporarilyAllow(request.url, forWebViewTab: tab)
-
+            
+            //request.cachePolicy = URLRequest.CachePolicy.reloadIgnoringLocalCacheData
+            
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 if let error = error {
                     print("[\(String(describing: type(of: self)))] failed auto-completing: \(error)")

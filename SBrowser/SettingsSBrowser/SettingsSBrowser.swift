@@ -2,7 +2,7 @@
 //  SettingsSBrowser.swift
 //  SBrowser
 //
-//  Created by JinXu on 22/01/20.
+//  Created by Jin Xu on 22/01/20.
 //  Copyright © 2020 SBrowser. All rights reserved.
 //
 
@@ -120,7 +120,7 @@ class SettingsSBrowser: NSObject {
     class var searchEngineName: String {
         get {
             return UserDefaults.standard.object(forKey: "search_engine") as? String
-                ?? allSearchEngineNames.first
+                ?? "Google"//allSearchEngineNames.first
                 ?? ""
         }
         set {
@@ -214,7 +214,7 @@ class SettingsSBrowser: NSObject {
                 return level
             }
 
-            return .clearOnBackground
+            return .alwaysRemember//.clearOnBackground //ps
         }
         set {
             UserDefaults.standard.set(newValue.rawValue, forKey: "tab_security")

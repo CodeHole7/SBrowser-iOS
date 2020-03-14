@@ -2,7 +2,7 @@
 //  BrowserViewController.swift
 //  SBrowser
 //
-//  Created by JinXu on 20/01/20.
+//  Created by Jin Xu on 20/01/20.
 //  Copyright © 2020 SBrowser. All rights reserved.
 //
 
@@ -10,13 +10,76 @@ import UIKit
 
 internal var sharedBrowserVC: BrowserViewController?
 
-class BrowserViewController: UIViewController, TabSBrowserDelegate {
+
+
+class BrowserViewController: UIViewController, TabSBrowserDelegate, CredentialImportControllerDelegate, ClientIdentityControllerDelegate {
+  
+
+//var challenge: URLAuthenticationChallenge?
+    var identity: SecIdentity?
+    var identityChoosen = true
+    func identityView(_ controller: ClientIdentityController!, didChoose identity: SecIdentity!) {
+        identityChoosen = true
+        
+        self.identity = identity
+        dismiss(animated: true)
+        return
+        
+//        var credential: URLCredential?
+//        var persistence: URLCredential.Persistence
+//        persistence = DebugOptions.shared().credentialPersistence
+//        credential = URLCredential(identity: identity!, certificates: nil, persistence: persistence)
+       // challenge?.sender?.use(credential!, for: challenge!)
+        
+    }
+    func _clientIdentityResolvedWithIdentity(identity: SecIdentity!){//todo hatao
+        print("called")
+    }
+    
+    
+    
+func credentialImport(_ credentialImport: CredentialImportController!, didImportWith status: CredentialImportStatus) {
+    
+    //dismissModalViewController(animated: true)
+    dismiss(animated: true)
+    
+    switch status {
+        case kCredentialImportStatusCancelled:
+            print("Import cancelled")
+        case kCredentialImportStatusFailed:
+           // var alert: UIAlertView?
+
+         //   _updateStatus("Import failed")
+
+//            alert = UIAlertView(title: "Import Failed", message: "", delegate: nil, cancelButtonTitle: "Dismiss", otherButtonTitles: "")
+//            assert(alert != nil)
+//
+//            alert?.show()
+        
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: "Import Failed", message: "Unsupported Content Type!", preferredStyle: UIAlertController.Style.alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            self.present(alert, animated: false, completion: nil)
+            //self.present(alert, self.view)
+        }
+        
+        
+        case kCredentialImportStatusSucceeded:
+            //updateStatus("Import succeeded")
+            Credentials.shared().refresh()
+        default:
+            break
+    }
+
+}
+    
     
     @objc
     class var defaultBrowserVC: BrowserViewController? {
         return sharedBrowserVC
     }
     
+    @IBOutlet weak var lblTitleHeader: UILabel!
     @IBOutlet weak var viewHeader: UIView!
     @IBOutlet weak var searchBar: UISearchBar!{
         didSet {
@@ -32,6 +95,15 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
             toolbarHeight = viewFooterHeightConstraint?.constant
         }
     }
+    
+    @IBOutlet weak var viewHeaderHeightConstraint: NSLayoutConstraint? {
+        didSet {
+            searchBarHeight = viewHeaderHeightConstraint?.constant
+        }
+    }
+    
+    
+    
     @IBOutlet weak var progressView: UIProgressView!
     @IBOutlet weak var viewTabsCollection: UIView!
     @IBOutlet weak var collectionViewTabs: UICollectionView! {
@@ -60,6 +132,7 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
     
     @IBOutlet weak var btnSecurity: UIButton!
     
+    @IBOutlet weak var searchFiled_trailing: NSLayoutConstraint!
     
     @objc
     enum Transition: Int {
@@ -130,11 +203,26 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
     }()
     
     
+//    init() {
+//        var nib = String(describing: type(of: self))
+//
+//        if UIDevice.current.userInterfaceIdiom == .pad {
+//            nib += "-iPad"
+//        }
+//
+//        super.init(nibName: nib, bundle: Bundle(for: type(of: self)))
+//    }
+//
+//    required init?(coder: NSCoder) {
+//        super.init(coder: coder)
+//    }
     
+    var customConstraints = [NSLayoutConstraint]()
     
-    
+    var blackLayer = UIView()
     override func viewDidLoad() {
         super.viewDidLoad()
+        
 
         // Do any additional setup after loading the view.
         sharedBrowserVC = self
@@ -146,8 +234,7 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
         collectionViewTabs.dragDelegate = self
         collectionViewTabs.dropDelegate = self
         
-        addNewTabSBrowser(URL.start, transition: .notAnimated)
-        
+                
         for tab in tabs {
             tab.add(to: container)
         }
@@ -157,6 +244,11 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
         updateChrome()
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.webViewFinishOrErrorNotificaiton(notification:)), name: NSNotification.Name(kWebViewFinishOrError), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.addNewBlankTab(notification:)), name: NSNotification.Name(kAddNewBlankTab), object: nil)
+        
+        
+        
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -235,6 +327,10 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
         updateChrome()
     }
     
+    @objc func addNewBlankTab(notification: Notification) {
+        addNewTabSBrowser(URL.start, transition: .notAnimated)
+    }
+    
 
     /*
     // MARK: - Navigation
@@ -271,7 +367,7 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
     }
     
     @IBAction func clickedPrivateTab(_ sender: UIButton) {
-        action(sender)
+      //  action(sender)  ps
     }
     
     @IBAction func clickedAddTab(_ sender: UIButton) {
@@ -293,12 +389,21 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
             self.viewHeader.isHidden = true
             viewContainer.isHidden = true
             viewTabsCollection.isHidden = false
+            
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                self.viewFooter.isHidden = false//Only in ipad
+                viewFooterHeightConstraint?.constant = toolbarHeight ?? 0
+            }
         } else {
             tabsTools.isHidden = true
             mainTools.isHidden = false
             self.viewHeader.isHidden = false
             viewContainer.isHidden = false
             viewTabsCollection.isHidden = true
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                self.viewFooter.isHidden = true//Only in ipad
+                viewFooterHeightConstraint?.constant =  0
+            }
         }
     }
     
@@ -344,12 +449,15 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
                 return
             }
 
-            //present(UIActivityViewController(activityItems: [currentTab], applicationActivities: [AddBookmarkActivity(), TUSafariActivity()]), sender)
+            present(UIActivityViewController(activityItems: [currentTab], applicationActivities: [ActivityAddBookmarkSBrowser(), TUSafariActivity()]), sender)
 
         case btnTabs:
             showOverview()
         case btnSettings:
-            //present(SettingsViewController.instantiate())
+            let vc = SBSettingsVC.instantiate()
+           // vc.modalPresentationStyle = .overFullScreen
+           // vc.modalTransitionStyle = .crossDissolve
+            present(vc)
             break
         case btnAddTab:
             newTabFromOverview()
@@ -358,14 +466,10 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
         }
     }
     
-    
-    
     func showBookmarks() {
         unfocusSearchField()
         present(BookmarksViewController.instantiate(), btnBookmark)
     }
-    
-    
     
     @objc func keyboardWillShow(notification: Notification) {
         if let kbSize = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
@@ -380,7 +484,6 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
         liveSearchVc.tableView.scrollIndicatorInsets = .zero
     }
 
-
     // MARK: TabDelegate
 
     func updateChrome(_ sender: TabSBrowser? = nil) {
@@ -393,8 +496,7 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
                 if !progress.isHidden {
                     view.transition({ progress.isHidden = true })
                 }
-            }
-            else {
+            } else {
                 if progress.isHidden {
                     view.transition({ progress.isHidden = false })
                 }
@@ -402,7 +504,6 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
         }
 
         updateReloadBt()
-
         updateSearchField()
 
         // The last non-hidden should be the one which is showing.
@@ -412,20 +513,37 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
             btnForward.isEnabled = false
             btnMenu.isEnabled = false
             updateTabCount()
-
             return
         }
 
-        let preset = SecurityPreset(HostSettingsSBrowser.for(tab.url.host))
+        let host = tab.url.host
+        let hostBrowser = HostSettingsSBrowser.for(host)
+        let preset = SecurityPreset(hostBrowser)
 
         if preset == .custom {
             btnSecurity.setBackgroundImage(SBSecurityLevelCell.customShieldImage, for: .normal)
             btnSecurity.setTitle(nil, for: .normal)
-        }
-        else {
+        } else {
             btnSecurity.setBackgroundImage(SBSecurityLevelCell.shieldImage, for: .normal)
             btnSecurity.setTitle(preset.shortcode, for: .normal)
         }
+        
+        
+        
+//        if (!_isOCSPRequest &&
+//            [_wvt secureMode] > SecureModeInsecure &&
+//            ![[[[_actualRequest URL] scheme] lowercaseString] isEqualToString:@"https"]) {
+//            /* an element on the page was not sent over https but the initial request was, downgrade to mixed */
+//            if ([_wvt secureMode] > SecureModeInsecure) {
+//                [_wvt setSecureMode:SecureModeMixed];
+//            }
+//        }
+        
+      //mj//  if tab.url.scheme?.lowercased() == "https" {
+       //mj//     tab.secureMode = TabSBrowser.SecureMode.mixed
+       //mj// }
+        
+        
 
         updateEncryptionBt(tab.secureMode)
         
@@ -433,6 +551,11 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
         btnForward.isEnabled = tab.canGoForward
         btnMenu.isEnabled = !tab.url.isSpecial
         updateTabCount()
+    }
+    
+    @objc    
+    func presentSBTab(_ vc: UIViewController, _ sender: UIView?) {
+        present(vc, sender)
     }
 
     @objc
@@ -494,20 +617,15 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
         debug("#removeTab tab=\(tab) focus=\(String(describing: focus))")
 
         unfocusSearchField()
-
         container.transition({
             tab.isHidden = true
             (focus ?? self.tabs.last)?.isHidden = false
         }) { _ in
             self.currentTab = focus ?? self.tabs.last
-
             let hash = tab.hash
-
             tab.removeFromSuperview()
             self.tabs.removeAll { $0 == tab }
-
             AppDelegate.shared?.cookieJar.clearNonWhitelistedData(forTab: UInt(hash))
-
             self.updateChrome()
         }
     }
@@ -657,6 +775,141 @@ class BrowserViewController: UIViewController, TabSBrowserDelegate {
         updateReloadBt()
     }
     
-    
+    @objc func ShowBlackLayer(){
+        blackLayer = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: UIScreen.main.bounds.size.height))
+        blackLayer.backgroundColor = UIColor(red: 0/255, green: 0/255, blue: 0/255, alpha: 0.85)
+        let label = UILabel(frame: CGRect(origin: CGPoint(x: (UIScreen.main.bounds.size.width/2)-75, y: UIScreen.main.bounds.size.height/2), size: CGSize(width: 150, height: 25)))
+      //  label.font = UIFont(name: label.font.fontName, size: 20)
+        label.textColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 1)
+        label.text = "Receiving"
+        let customFont = UIFont(name: "System", size: 30)
+        label.font = customFont
+        //fromLabel.numberOfLines = 1
+        label.baselineAdjustment = .alignBaselines // or UIBaselineAdjustmentAlignCenters, or UIBaselineAdjustmentNone
+        label.textAlignment = .center
+        let loadingIndicator: UIActivityIndicatorView = UIActivityIndicatorView(frame: CGRect(x: (UIScreen.main.bounds.size.width/2)-50, y: (UIScreen.main.bounds.size.height/2)+50, width: 100, height: 100) )
+        loadingIndicator.hidesWhenStopped = true
+        loadingIndicator.style = UIActivityIndicatorView.Style.whiteLarge
+        loadingIndicator.startAnimating();
+        blackLayer.addSubview(loadingIndicator)
+        blackLayer.addSubview(label)
+        self.view.addSubview(blackLayer)
+       // print("log: ###################### Step 1 : Receiving Start")
+    }
+    @objc func HideBlackLayer(){
+      //  print("log: ###################### Step 1 : Receiving End")
+        DispatchQueue.main.async {
+            self.blackLayer.removeFromSuperview()
+        }
+    }
+    @objc func ShowFailedAlert(){
+//        DispatchQueue.main.async {
+//            let av = UIAlertController(title: "Get Failed", message: "", preferredStyle: .alert)
+//            av.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
+//
+//                return
+//            }))
+//          //  av.modalPresentationStyle = .popover//.fullScreen//.popover
+//            self.present(av, self.view)
+//        }
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: "Get Failed", message: "Unsupported Content Type!", preferredStyle: UIAlertController.Style.alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            self.present(alert, animated: false, completion: nil)
+            //self.present(alert, self.view)
+        }
+    }
+    @objc func ShowCertificatesPasswordAlert(data:NSData, type:NSString){
+        let av = UIAlertController(title: "Enter Password", message: "Please enter the password for this certificate", preferredStyle: .alert)
 
+        av.addTextField(configurationHandler: { (textField) in
+            textField.placeholder = "Password"
+            textField.isSecureTextEntry = true
+        })
+
+        av.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action) in
+            return
+        }))
+        av.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+            guard let password = av.textFields?.first?.text else{
+                return
+            }
+            var err: OSStatus
+       //     var status: CredentialImportStatus
+            var importedItems: CFArray?
+
+         //   status = kCredentialImportStatusFailed
+
+            importedItems = nil
+
+            err = SecPKCS12Import((data as CFData), ([
+                kSecImportExportPassphrase : password
+                ] as CFDictionary?)!, &importedItems)
+       
+            if err == 0{
+                //paswordcorrect
+                if let importedItems = importedItems {
+                    for itemDict in importedItems as [AnyObject] {
+                        guard let itemDict = itemDict as? [AnyHashable : Any] else {
+                            continue
+                        }
+                        let identity: SecIdentity = itemDict[kSecImportItemIdentity as String] as! SecIdentity
+                         //= SBProfilesInfoVC()
+                        let vc = SBProfilesInfoVC()
+
+                        let obj = UINavigationController(rootViewController: vc)
+                 
+              
+                       
+//                        let navigationItem = UINavigationItem()
+//                        navigationItem.title = "Title"
+//                        
+//                        vc.navigationController?.navigationBar.items = [navigationItem]
+                  
+                        
+                        
+                        
+                        
+//                        let btnleft : UIButton = UIButton(frame: CGRect(x:0, y:0, width:35, height:35))
+//                        btnleft.setTitleColor(UIColor.white, for: .normal)
+//                        btnleft.contentMode = .left
+//
+//
+//                        let backBarButon: UIBarButtonItem = UIBarButtonItem(customView: btnleft)
+//
+//                        self.navigationItem.setLeftBarButtonItems([backBarButon], animated: false)
+                        
+                        
+                        vc.identity = identity
+                        vc.isViewFromSettings = false
+                        self.present(obj, animated: true, completion: nil)
+                        break;
+
+                        // if (err == errSecDuplicateItem) {
+                        //     err = noErr;
+                        // }
+                        // if (err != noErr) {
+                        //     break;
+                        // }
+                    }
+                }
+                
+            }else{
+                //password incorrect
+                let alert = UIAlertController(title: "Password Incorrect", message: "", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
+                    self.ShowCertificatesPasswordAlert(data: data, type: type)
+                    return
+                }))
+                self.present(alert, animated: false, completion: nil)
+                return
+            }
+            
+        }))
+        self.present(av, animated: false, completion: nil)
+       // self.tabDelegate?.presentSBTab(av, nil)//vishnu
+    }
+    @objc private func dismsiss_() {
+        navigationController?.dismiss(animated: true)
+    }
 } //End of class

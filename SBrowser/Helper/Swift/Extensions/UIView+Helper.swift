@@ -2,7 +2,7 @@
 //  UIView+Helper.swift
 //  SBrowser
 //
-//  Created by JinXu on 22/01/20.
+//  Created by Jin Xu on 22/01/20.
 //  Copyright © 2020 SBrowser. All rights reserved.
 //
 
@@ -25,6 +25,8 @@ extension UIView {
 
         return self
     }
+    
+    
 
     /**
     Creates a transition animation of type `transitionCrossDissolve` with length 0.5 seconds for this

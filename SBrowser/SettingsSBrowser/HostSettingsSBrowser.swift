@@ -2,7 +2,7 @@
 //  HostSettingsSBrowser.swift
 //  SBrowser
 //
-//  Created by JinXu on 22/01/20.
+//  Created by Jin Xu on 22/01/20.
 //  Copyright © 2020 SBrowser. All rights reserved.
 //
 
@@ -64,6 +64,7 @@ class HostSettingsSBrowser: NSObject {
                 self = .strict
             }
         }
+        
     }
 
     private static let fileUrl: URL? = {
@@ -90,10 +91,8 @@ class HostSettingsSBrowser: NSObject {
             if _raw == nil, let url = fileUrl {
                 _raw = NSDictionary(contentsOf: url) as? [String: [String: String]]
             }
-
             return _raw ?? [:]
-        }
-        set {
+        } set {
             _raw = newValue
         }
     }
@@ -117,14 +116,14 @@ class HostSettingsSBrowser: NSObject {
         settings.
 
     - parameter host: The host name. Can be `nil` which will return the default settings.
-    - returns: Settings for the given host.
+    - returns: SettingsSBrowser for the given host.
     */
     @objc
     class func `for`(_ host: String?) -> HostSettingsSBrowser {
+        guard let hostS = host, !hostS.isEmpty else {
         // If no host given, return default host settings.
-        guard let host = host, !host.isEmpty else {
-            // If user-customized default host settings available, return these.
             if has(defaultHost) {
+            // If user-customized default host settings available, return these.
                 return HostSettingsSBrowser(for: defaultHost, raw: raw[defaultHost]!)
             }
 
@@ -133,18 +132,17 @@ class HostSettingsSBrowser: NSObject {
         }
 
         // If user-customized settings for this host available, return these.
-        if has(host) {
-            return HostSettingsSBrowser(for: host, raw: raw[host]!)
+        if has(hostS) {
+            return HostSettingsSBrowser(for: hostS, raw: raw[hostS]!)
         }
 
         // ...else return new empty settings for this host which will trigger
         // fall through logic to higher domain levels or default host settings.
-        return HostSettingsSBrowser(for: host, withDefaults: false)
+        return HostSettingsSBrowser(for: hostS, withDefaults: false)
     }
 
     /**
     Check, if we have explicit settings for a given host.
-
     This will *not* check the domain level hirarchy!
 
     - parameter host: The host name.

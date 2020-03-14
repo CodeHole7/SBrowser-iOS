@@ -2,7 +2,7 @@
 //  TabCellSBrowser.swift
 //  SBrowser
 //
-//  Created by JinXu on 22/01/20.
+//  Created by Jin Xu on 22/01/20.
 //  Copyright © 2020 SBrowser. All rights reserved.
 //
 
@@ -97,8 +97,7 @@ class TabCellSBrowser: UICollectionViewCell, UIGestureRecognizerDelegate {
             // A close swipe always needs to be in the up direction.
             if trans.y < 0 {
                 center = CGPoint(x: originalCenter.x + trans.x, y: originalCenter.y + trans.y)
-            }
-            else {
+            } else {
                 // 3rd step: Cancel this recognizer, when swipe is down instead of up.
                 // UICollectionView scroll should take over.
                 panGr.isEnabled = false
@@ -113,8 +112,7 @@ class TabCellSBrowser: UICollectionViewCell, UIGestureRecognizerDelegate {
             // or over 0, for the first tab row.
             if center.y < max(0, originalCenter.y - bounds.height) {
                 delegate?.close(self)
-            }
-            else {
+            } else {
                 center = originalCenter
             }
 
@@ -122,4 +120,14 @@ class TabCellSBrowser: UICollectionViewCell, UIGestureRecognizerDelegate {
             center = originalCenter
         }
     }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        title.text = ""
+        for v in container.subviews {
+            v.removeFromSuperview()
+        }
+        container.subviews.first?.isHidden = false
+    }
+    
 }
